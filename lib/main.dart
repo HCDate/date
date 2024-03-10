@@ -18,11 +18,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
           options: FirebaseOptions(
-              apiKey: "AIzaSyD3kxU-VND-wSKYFc_pxgPUR72ByT0NPdM",
-              appId: "1:832945625672:android:a96b7bf5f05db854b7967d",
-              messagingSenderId: "832945625672",
-              projectId: "date-50347",
-              storageBucket: "date-50347.appspot.com"))
+              apiKey: "AIzaSyAgjLLHu_kj1pson6Mxy2VI45bVCy8_df4",
+              appId: "1:657318502691:android:933f51e85f8b94f8f36c96",
+              messagingSenderId: "657318502691",
+              projectId: "habeshac-7856b",
+              storageBucket: "habeshac-7856b.appspot.com"))
       .then((value) {
     Get.put(AuthenticationController());
   });

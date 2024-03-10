@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "832945625672",
-    "project_id": "date-50347",
-    "storage_bucket": "date-50347.appspot.com"
+    "project_number": "657318502691",
+    "project_id": "habeshac-7856b",
+    "storage_bucket": "habeshac-7856b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:832945625672:android:a96b7bf5f05db854b7967d",
+        "mobilesdk_app_id": "1:657318502691:android:933f51e85f8b94f8f36c96",
         "android_client_info": {
           "package_name": "com.example.date"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "657318502691-bc2tvlrmam0pj2gui53eeg4jejeqnt6i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyD3kxU-VND-wSKYFc_pxgPUR72ByT0NPdM"
+          "current_key": "AIzaSyAgjLLHu_kj1pson6Mxy2VI45bVCy8_df4"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657318502691-bc2tvlrmam0pj2gui53eeg4jejeqnt6i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
