@@ -40,23 +40,23 @@ class _SignUpState extends State<SignUp> {
         Get.to(FirstPage());
 
         print(userDetails.uid);
-      } on FirebaseAuthException catch (e) {}
+      } on FirebaseAuthException catch (e) {
+        alert(
+          context,
+          'Title here',
+          e.message ?? '',
+          variant: Variant.warning,
+        );
+      }
     } else {
       alert(
         context,
-        'Title here',
-        'Description here',
+        'User Info',
+        'No User Found',
         variant: Variant.warning,
       );
     }
-    // Obtain the auth details from the request
-
-    // Create a new credential
-
-    // Once signed in, return the UserCredential
-    // final user = await FirebaseAuth.instance.signInWithCredential(credential);
-    // print(user);
-    // return await FirebaseAuth.instance.signInWithCredential(credential);
+   
   }
 
   @override
@@ -67,7 +67,7 @@ class _SignUpState extends State<SignUp> {
           child: DecoratedBox(
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/images/log.webp'),
+                    image: AssetImage('assets/images/splash.jpg'),
                     fit: BoxFit.cover)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -92,6 +92,7 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: 50,
                 ),
+                
                 Container(
                     width: MediaQuery.of(context).size.width - 30,
                     height: 50,

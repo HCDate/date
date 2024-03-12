@@ -16,7 +16,7 @@ class AuthScreen extends StatelessWidget {
         child: DecoratedBox(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/log.webp'),
+                  image: AssetImage('assets/images/splash.jpg'),
                   fit: BoxFit.cover)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

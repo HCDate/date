@@ -50,7 +50,14 @@ class _LoginScreenState extends State<LoginScreen> {
         // Get.to(FirstPage());
 
         print(userDetails.uid);
-      } on FirebaseAuthException catch (e) {}
+      } on FirebaseAuthException catch (e) {
+        alert(
+          context,
+          'Title here',
+          e.message ?? '',
+          variant: Variant.warning,
+        );
+      }
     } else {
       alert(
         context,
@@ -75,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Stack(children: [
       Positioned.fill(
         child: Image.asset(
-          'assets/images/log.webp', // Replace this with your background image asset
+          'assets/images/splash.jpg', // Replace this with your background image asset
           fit: BoxFit.cover,
         ),
       ),
