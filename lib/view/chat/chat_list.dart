@@ -82,7 +82,10 @@ class _ChatListPageState extends State<ChatListPage> {
                   .getChats(FirebaseAuth.instance.currentUser!.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.pink,
+                  ));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   // Display a user-friendly message when the chat list is empty
 
@@ -136,8 +139,7 @@ class _ChatListPageState extends State<ChatListPage> {
                               builder: (context, userSnapshot) {
                                 if (userSnapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
+                                  return const Center(child: Text(''));
                                 } else if (!userSnapshot.hasData) {
                                   return const ListTile(
                                     title: Text('Loading...'),

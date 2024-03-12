@@ -94,6 +94,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         .update({"online": status});
   }
 
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       setStatus(true);
@@ -187,7 +188,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     retrieveUserInfo();
 
     _chatController.updateSeenStatusOnChatEnter(widget.chat.id);
-
+    WidgetsBinding.instance!.addObserver(this);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
   }

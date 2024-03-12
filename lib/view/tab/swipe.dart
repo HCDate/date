@@ -182,7 +182,10 @@ class _SwipeScreenState extends State<SwipeScreen> {
         child: Obx(() {
           final profileList = profileController.allUsersProfileList;
           return profileList.isEmpty
-              ? Center(child: CircularProgressIndicator())
+              ? Center(
+                  child: CircularProgressIndicator(
+                  color: Colors.pink,
+                ))
               : Stack(
                   children: [
                     Column(
@@ -193,6 +196,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
                             controller: _controller,
                             cardsCount: profileList.length,
                             cardBuilder: _cardBuilder,
+                            numberOfCardsDisplayed: 1,
                             onSwipe: (int previousIndex, int? currentIndex,
                                 CardSwiperDirection direction) {
                               debugPrint(
