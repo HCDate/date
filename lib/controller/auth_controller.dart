@@ -80,7 +80,8 @@ class AuthenticationController extends GetxController {
       String religion,
       List<String> interests,
       String lookingFor,
-      String bio) async {
+      String bio,
+      bool? paymentStatus) async {
     try {
       // UserCredential userCredential = await FirebaseAuth.instance
       //     .createUserWithEmailAndPassword(email: email, password: password);
@@ -104,7 +105,8 @@ class AuthenticationController extends GetxController {
           religion: religion,
           interests: interests,
           lookingFor: lookingFor,
-          bio: bio);
+          bio: bio,
+          paymentStatus: paymentStatus);
       await FirebaseFirestore.instance
           .collection("users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -174,6 +176,7 @@ class AuthenticationController extends GetxController {
       final user = await _firebaseAuth.signInWithCredential(cred);
       if (user.user != null) {
         // return "Success";
+        print(cred.providerId);
         Get.to(FirstPage());
       } else {
         return "Error in otp login";
@@ -189,17 +192,39 @@ class AuthenticationController extends GetxController {
     final cred =
         PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
     try {
-      final user = await _firebaseAuth.signInWithCredential(cred);
-      if (user.user != null) {
-        // return "Success";
-        Get.to(HomeScreen());
+      final bool isUserRegistered = await isRegisteredUser(cred.providerId);
+      if (isUserRegistered) {
+        final user = await _firebaseAuth.signInWithCredential(cred);
+        if (user.user != null) {
+          // return "Success";
+          Get.to(HomeScreen());
+        } else {
+          return "Error ";
+        }
       } else {
-        return "Error in otp login";
+        return "NotRegistered";
       }
     } on FirebaseAuthException catch (e) {
       return e.message.toString();
     } catch (e) {
       return e.toString();
+    }
+  }
+
+  Future<bool> isRegisteredUser(String userId) async {
+    try {
+      // Get the user document from the "users" collection
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      // Check if the document exists
+      return userSnapshot.exists;
+    } catch (e) {
+      // Handle errors, such as Firestore exceptions
+      print('Error checking user registration: $e');
+      return false;
     }
   }
 

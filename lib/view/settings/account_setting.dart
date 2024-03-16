@@ -205,9 +205,18 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
         List.generate(availableInterests.length, (index) => false);
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(
+              Icons.navigate_before_outlined,
+              size: 36,
+            ),
+          ),
           title: Text(
             next ? "Profile Information" : "Choose 5 Images",
-            style: const TextStyle(color: Colors.black, fontSize: 22),
+            style: const TextStyle(color: Colors.pink, fontSize: 22),
           ),
           actions: [
             next
@@ -221,6 +230,12 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                         });
                       } else {
                         Get.snackbar("5 images", 'please choose 5 images');
+                        alert(
+                          context,
+                          '5 images',
+                          'please choose 5 images',
+                          variant: Variant.info,
+                        );
                       }
                     },
                     icon: const Icon(

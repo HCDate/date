@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_image_slider/carousel.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../auth/login/login_screen.dart';
 
@@ -90,11 +91,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
     });
   }
 
-  
-  
-  
-  
-  
   final ProfileController _profileController = ProfileController();
   String favorited = '';
   String liked = '';
@@ -134,6 +130,8 @@ class _UserDetailScreenState extends State<UserDetailScreen>
       favorites = counted.toString();
     });
   }
+
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
@@ -201,6 +199,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                                 confirmed: () async {
                                   // do something here
                                   try {
+                                    await googleSignIn.signOut();
                                     await FirebaseAuth.instance.signOut();
                                     Get.offAll(const LoginScreen());
                                   } catch (e) {}

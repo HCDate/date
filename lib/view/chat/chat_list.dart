@@ -167,7 +167,7 @@ class _ChatListPageState extends State<ChatListPage> {
                                     if (check &&
                                         lastMessage.content.length > 10) {
                                       textToDisplay =
-                                          '${lastMessage.content.substring(0, 20)}...';
+                                          '${lastMessage.content.substring(0, 10)}...';
                                     }
 
                                     return hasContent

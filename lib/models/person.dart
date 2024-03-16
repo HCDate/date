@@ -20,7 +20,7 @@ class Person {
   String? bio;
   bool? online;
   List<String>? blocklist;
-
+  bool? paymentStatus;
   Person(
       {this.uid,
       this.imageProfile,
@@ -40,7 +40,8 @@ class Person {
       this.lookingFor,
       this.bio,
       this.online,
-      this.blocklist});
+      this.blocklist,
+      this.paymentStatus});
   static Person fromDataSnapshot(DocumentSnapshot snapshot) {
     var dataSnapshot = snapshot.data() as Map<String, dynamic>;
     List<dynamic>? interestsData = dataSnapshot['interests'];
@@ -66,7 +67,8 @@ class Person {
         interests: interests,
         bio: dataSnapshot['bio'],
         online: dataSnapshot['online'],
-        blocklist: blocklists);
+        blocklist: blocklists,
+        paymentStatus: dataSnapshot['paymentStatus']);
   }
 
   Map<String, dynamic> toJson() => {
@@ -86,6 +88,7 @@ class Person {
         "lookingFor": lookingFor,
         "bio": bio,
         "online": online,
-        "blocklist": blocklist
+        "blocklist": blocklist,
+        "paymentStatus": paymentStatus
       };
 }

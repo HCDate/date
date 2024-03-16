@@ -56,7 +56,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   final FocusNode focusNode = FocusNode();
   String audioURL = "";
   final ProfileController _profileController = ProfileController();
-  int _limit = 20;
+  int _limit = 100;
   int _limitIncrement = 20;
   List<QueryDocumentSnapshot> listMessage = [];
   // void _initialize() async {
@@ -69,11 +69,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
   void _scrollToBottom() {
     // if (_scrollController.hasClients) {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent + 300,
-      duration: const Duration(milliseconds: 30),
-      curve: Curves.easeInOut,
-    );
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     // }
   }
 
@@ -99,7 +95,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       setStatus(true);
     } else {
-      setStatus(false);
+      setStatus(true);
     }
   }
 
@@ -189,8 +185,11 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
     _chatController.updateSeenStatusOnChatEnter(widget.chat.id);
     WidgetsBinding.instance!.addObserver(this);
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Use the ScrollController after the frame is drawn
+      _scrollController = ScrollController();
+      _scrollController.addListener(_scrollListener);
+    });
   }
 
   _scrollListener() {
@@ -234,13 +233,24 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                         itemBuilder: (BuildContext context) => <PopupMenuEntry>[
                           PopupMenuItem(
                             onTap: () async {
-                              await _profileController
-                                  .retrieveUserInfo(widget.uid);
-                              alert(
+                              confirm(
                                 context,
-                                'Block User',
-                                'It blocked succeeded',
-                                variant: Variant.warning,
+                                ConfirmDialog(
+                                  'Are you sure to block?',
+                                  message: 'It going to block?',
+                                  variant: Variant.warning,
+                                  confirmed: () async {
+                                    // do something here
+                                    await _profileController
+                                        .retrieveUserInfo(widget.uid);
+                                    alert(
+                                      context,
+                                      'Block User',
+                                      'It blocked succeeded',
+                                      variant: Variant.warning,
+                                    );
+                                  },
+                                ),
                               );
                             },
                             value: 'Option 1',

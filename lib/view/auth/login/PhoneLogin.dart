@@ -1,21 +1,20 @@
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_phone_number_field/flutter_phone_number_field.dart';
 
 import '../../../controller/auth_controller.dart';
 
-class PhoneVerification extends StatefulWidget {
-  const PhoneVerification({super.key});
+class PhoneLogin extends StatefulWidget {
+  const PhoneLogin({super.key});
 
   @override
-  State<PhoneVerification> createState() => _PhoneVerificationState();
+  State<PhoneLogin> createState() => _PhoneLoginState();
 }
 
-class _PhoneVerificationState extends State<PhoneVerification> {
+class _PhoneLoginState extends State<PhoneLogin> {
   FocusNode focusNode = FocusNode();
-  TextEditingController _otpController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String phoneNumber = "";
   @override
@@ -28,17 +27,17 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
-            Text(
+            const Text(
               'Sign In with phone number',
               style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.pink,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18),
+                  fontSize: 20),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             SizedBox(
@@ -71,18 +70,18 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                 },
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
             Center(
               child: Container(
                   width: MediaQuery.of(context).size.width - 150,
                   height: 50,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: Colors.pink,
                       borderRadius: BorderRadius.all(Radius.circular(12))),
                   child: TextButton(
-                    child: Text(
+                    child: const Text(
                       'Continue',
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
@@ -101,14 +100,14 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                        title: Text("OTP verification"),
+                                        title: const Text("OTP verification"),
                                         content: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text("Enter 6 digit"),
-                                            SizedBox(
+                                            const Text("Enter 6 digit"),
+                                            const SizedBox(
                                               height: 12,
                                             ),
                                             Form(
@@ -139,12 +138,12 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                                                 if (_formKey.currentState!
                                                     .validate()) {
                                                   authenticationController
-                                                      .loginWithOtp(
+                                                      .loginOtp(
                                                           otp: _otpController
                                                               .text);
                                                 }
                                               },
-                                              child: Text("Submit"))
+                                              child: const Text("Submit"))
                                         ],
                                       ));
                             });

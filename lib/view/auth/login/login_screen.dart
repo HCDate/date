@@ -1,16 +1,12 @@
 import 'package:bilions_ui/bilions_ui.dart';
-import 'package:date/view/auth/onBoarding/onBoardingScreen.dart';
+import 'package:date/view/auth/login/PhoneLogin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_number_field/flutter_phone_number_field.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:simple_icons/simple_icons.dart';
 
 import '../../../controller/auth_controller.dart';
-import '../../../widgets/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,207 +29,152 @@ class _LoginScreenState extends State<LoginScreen> {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser != null) {
+      final bool isUserRegistered =
+          await authenticationController.isRegisteredUser(googleUser.id);
       try {
-        final GoogleSignInAuthentication? googleAuth =
-            await googleUser?.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
-        );
-        final User userDetails =
-            (await FirebaseAuth.instance.signInWithCredential(credential))
-                .user!;
-        authenticationController.nameController.text =
-            userDetails.displayName ?? '';
-        authenticationController.emailController.text = userDetails.email ?? '';
+        if (isUserRegistered) {
+          final GoogleSignInAuthentication? googleAuth =
+              await googleUser?.authentication;
+          final credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth?.accessToken,
+            idToken: googleAuth?.idToken,
+          );
+          final User userDetails =
+              (await FirebaseAuth.instance.signInWithCredential(credential))
+                  .user!;
+          authenticationController.nameController.text =
+              userDetails.displayName ?? '';
+          authenticationController.emailController.text =
+              userDetails.email ?? '';
+        } else {
+          alert(
+            context,
+            'User Not found',
+            'User is not registered',
+            variant: Variant.warning,
+          );
+        }
+
         // authenticationController.profileImage.toString()=userDetails.photoURL;
         // Get.to(FirstPage());
-
-        print(userDetails.uid);
       } on FirebaseAuthException catch (e) {
         alert(
           context,
-          'Title here',
-          e.message ?? '',
+          'Login Error',
+          e.toString(),
           variant: Variant.warning,
         );
       }
     } else {
       alert(
         context,
-        'Title here',
-        'Description here',
+        'User Not found',
+        'user not found',
         variant: Variant.warning,
       );
     }
-    // Obtain the auth details from the request
-
-    // Create a new credential
-
-    // Once signed in, return the UserCredential
-    // final user = await FirebaseAuth.instance.signInWithCredential(credential);
-    // print(user);
-    // return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(children: [
-      Positioned.fill(
-        child: Image.asset(
-          'assets/images/splash.jpg', // Replace this with your background image asset
-          fit: BoxFit.cover,
-        ),
-      ),
-      Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(20.0),
+    return Positioned.fill(
+        top: 0,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/images/splash.jpg'),
+                  fit: BoxFit.cover)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 500.0),
-              SizedBox(
-                height: 75,
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: FlutterPhoneNumberField(
-                  style: TextStyle(color: Colors.white),
-                  focusNode: focusNode,
-                  initialCountryCode: "ET",
-                  pickerDialogStyle: PickerDialogStyle(
-                    countryFlagStyle:
-                        const TextStyle(fontSize: 17, color: Colors.white),
-                  ),
-                  decoration: const InputDecoration(
-                    hintText: 'Phone Number',
-                    hintStyle: TextStyle(color: Colors.white),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(),
-                    ),
-                  ),
-                  languageCode: "en",
-                  onChanged: (phone) {
-                    if (phone.completeNumber.length == 13) {
-                      setState(() {
-                        phoneNumber = phone.completeNumber;
-                      });
-                      confirm(
-                        context,
-                        ConfirmDialog(
-                          'Are you sure?',
-                          message: 'Are you sure is your phone number?',
-                          variant: Variant.warning,
-                          confirmed: () {
-                            // do something here
-                            authenticationController.sentOtp(
-                                phone: phoneNumber,
-                                errorStep: () => alert(
-                                      context,
-                                      'Title here',
-                                      'Description here',
-                                      variant: Variant.warning,
-                                    ),
-                                nextStep: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                            title: Text("OTP verification"),
-                                            content: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text("Enter 6 digit"),
-                                                SizedBox(
-                                                  height: 12,
-                                                ),
-                                                Form(
-                                                  key: _formKey,
-                                                  child: TextFormField(
-                                                    controller: _otpController,
-                                                    keyboardType:
-                                                        TextInputType.phone,
-                                                    decoration: InputDecoration(
-                                                        labelText:
-                                                            'Enter you phone number',
-                                                        border: OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        32))),
-                                                    validator: (value) {
-                                                      if (value!.length != 6)
-                                                        return "Invalid";
-                                                      return null;
-                                                    },
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    if (_formKey.currentState!
-                                                        .validate()) {
-                                                      authenticationController
-                                                          .loginOtp(
-                                                              otp:
-                                                                  _otpController
-                                                                      .text);
-                                                    }
-                                                  },
-                                                  child: Text("Submit"))
-                                            ],
-                                          ));
-                                });
-                          },
-                        ),
-                      );
-                    }
-                  },
-                  onCountryChanged: (country) {
-                    if (kDebugMode) {
-                      print('Country changed to: ${country.name}');
-                    }
-                  },
+              const Spacer(),
+              _buildTextSection(),
+              const SizedBox(
+                height: 50,
+              ),
+              _buildButtonSection(
+                context: context,
+                label: "Sign In With Google",
+                onPressed: () => signInWithGoogle(),
+                color: Colors.white,
+                textColor: Colors.black,
+                Icon: const Icon(
+                  SimpleIcons.google,
+                  color: Colors.green,
                 ),
               ),
-              SizedBox(height: 60.0),
-              Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(.4),
-                      borderRadius: BorderRadius.all(Radius.circular(12))),
-                  child: TextButton(
-                    child: Center(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            SimpleIcons.google,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Text(
-                            'With Google',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          )
-                        ],
-                      ),
-                    ),
-                    onPressed: () {
-                      signInWithGoogle();
-                      // Get.to(FirstPage());
-                    },
-                  )),
+              const SizedBox(
+                height: 20,
+              ),
+              _buildButtonSection(
+                context: context,
+                label: "Sign In  Phone Number",
+                onPressed: () => Get.to(PhoneLogin()),
+                color: Colors.pink,
+                textColor: Colors.white,
+                Icon: const Icon(
+                  Icons.phone,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              SizedBox(
+                height: 100,
+              ),
             ],
+          ),
+        ));
+  }
+
+  Widget _buildButtonSection(
+      {required BuildContext context,
+      required String label,
+      required VoidCallback onPressed,
+      required Color color,
+      Color? textColor,
+      Icon? Icon}) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.8,
+      height: 50,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+      ),
+      child: TextButton(
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon!,
+            Text(
+              label,
+              style: TextStyle(
+                color: textColor ?? Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextSection() {
+    return GestureDetector(
+      child: const Center(
+        child: Text(
+          "habesha\nchristian\nmingle",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 36,
+            decoration: TextDecoration.none,
           ),
         ),
       ),
-    ]));
+    );
   }
 }

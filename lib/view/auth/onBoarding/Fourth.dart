@@ -1,12 +1,13 @@
-import 'dart:io';
+import 'dart:convert';
 
+import 'package:bilions_ui/bilions_ui.dart';
 import 'package:date/controller/auth_controller.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paypal/flutter_paypal.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:uic/checkbox_uic.dart';
 import 'package:uic/step_indicator.dart';
-
-import '../../../services/interest.dart';
-import '../../../widgets/custom_text_field.dart';
+import 'package:http/http.dart' as http;
 
 class FourthPage extends StatefulWidget {
   FourthPage();
@@ -16,139 +17,290 @@ class FourthPage extends StatefulWidget {
 }
 
 class _FourthPageState extends State<FourthPage> {
-  List<Interest> availableInterests = [
-    Interest(name: 'Photography', image: 'assets/images/camera.png'),
-    Interest(name: 'Shopping', image: 'assets/images/weixin-market.png'),
-    Interest(name: 'Cooking', image: 'assets/images/noodles.png'),
-    Interest(name: 'Tennis', image: 'assets/images/tennis.png'),
-    Interest(name: 'Run', image: 'assets/images/sport.png'),
-    Interest(name: 'Swimming', image: 'assets/images/ripple.png'),
-    Interest(name: 'Art', image: 'assets/images/platte.png'),
-    Interest(name: 'Traveling', image: 'assets/images/outdoor.png'),
-    Interest(name: 'Extreme', image: 'assets/images/parachute.png'),
-    Interest(name: 'Drink', image: 'assets/images/goblet-full.png'),
-    Interest(name: 'Music', image: 'assets/images/music.png'),
-    Interest(name: 'Video games', image: 'assets/images/game-handle.png'),
-    // Add
-  ];
+  bool? term;
+  bool? paymentStatus;
+  Map<String, dynamic>? paymentIntent;
+
+  void makePayment() async {
+    try {
+      print("make payment");
+      paymentIntent = await createPaymentIntent();
+      print(paymentIntent);
+      var gpay = const PaymentSheetGooglePay(
+          merchantCountryCode: "US", currencyCode: "US", testEnv: true);
+      await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+              paymentIntentClientSecret: paymentIntent!["client_secret"],
+              style: ThemeMode.light,
+              merchantDisplayName: "Beki",
+              googlePay: gpay));
+      displayPaymentSheet();
+      setState(() {
+        paymentStatus = true;
+      });
+    } catch (e) {
+      setState(() {
+        paymentStatus = true;
+      });
+      throw Exception(e.toString());
+    }
+  }
+
+  void displayPaymentSheet() async {
+    try {
+      await Stripe.instance.presentPaymentSheet();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  calculateAmount(String amount) {
+    final a = (int.parse(amount)) * 100;
+    return a.toString();
+  }
+
+  createPaymentIntent() async {
+    try {
+      Map<String, dynamic> body = {
+        "amount": calculateAmount('20'),
+        "currency": "usd"
+      };
+      http.Response response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+          headers: {
+            "Authorization":
+                "Bearer sk_test_51OFYhgD9rzaCJql7s4IMR4aqt0iZZZqXq8CrrM5xt5m0fKuJCtxQ7phaIoLBkxfVim4XwIAqHbhnWMvPWhWseMCL00oHD6rcGM",
+            "Content-Type": "application/x-www-form-urlencoded"
+          });
+      return json.decode(response.body);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String? selectedGender;
     var authenticationController =
         AuthenticationController.authenticationController;
-    List<bool> selectedList =
-        List.generate(availableInterests.length, (index) => false);
+
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          SizedBox(
-            height: 20,
+          const SizedBox(
+            height: 60,
           ),
           StepIndicator(
             selectedStepIndex: 4,
             totalSteps: 4,
-            showLines: true,
-            colorCompleted: Colors.pink,
+            completedStep: Icon(
+              Icons.check_circle,
+              color: Theme.of(context).primaryColor,
+            ),
+            incompleteStep: Icon(
+              Icons.radio_button_unchecked,
+              color: Theme.of(context).primaryColor,
+            ),
+            selectedStep: Icon(
+              Icons.radio_button_checked,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
-          Text(
-            "Your Interests",
+          const Text(
+            "Payment",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
-          Text(
-            "Select a few of your interests and let everyone know what you're passionate about",
+          const Text(
+            "Choose Payment Method",
             maxLines: 2,
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
-          GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                mainAxisExtent: 50),
-            itemCount: availableInterests.length,
-            itemBuilder: (context, index) {
-              final isSelected = authenticationController.selectedInterests
-                  .contains(availableInterests[index].name);
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      authenticationController.selectedInterests
-                          .remove(availableInterests[index].name);
-                    } else {
-                      authenticationController.selectedInterests
-                          .add(availableInterests[index].name);
-                    }
-                  });
-                  if (kDebugMode) {
-                    print(authenticationController.selectedInterests);
-                  }
-                },
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: isSelected ? Colors.pink : Colors.white,
-                      borderRadius: BorderRadius.circular(
-                          20)), // Adjust the height as needed
-
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        availableInterests[index].image,
-                        width: 30, // Adjust the width as needed
-                        height: 30, // Adjust the height as needed
-                      ),
-                      SizedBox(height: 4), // Adjust the spacing as needed
-                      Text(
-                        availableInterests[index].name,
-                        style: TextStyle(
-                          fontSize: 12, // Adjust the font size as needed
-                          color:
-                              selectedList[index] ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
+          const SizedBox(
+            height: 10,
+          ),
+          InkWell(
+            onTap: () {
+              makePayment();
+            },
+            child: const Row(
+              children: [
+                SizedBox(
+                  width: 10,
+                ),
+                Icon(Icons.credit_card),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  "Debit or Credit Card",
+                  style: TextStyle(fontSize: 18),
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 50,
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => UsePaypal(
+                      sandboxMode: true,
+                      clientId:
+                          "AS4Y8vl9WGXCB3VNinxQ9zyccNwN2u1Wj_anaR7mPK1Kvys-CmLdi5Azv5fVKGGy_UM08bSMm-kly7zI",
+                      secretKey:
+                          "EGp3K6HurDSpXM1UCS-1ariWtGH1oqPPcSPqJ6yFx-tzKRIuNKgLMW_DJ3KsOel3FUZZ8l1SrW382Zmf",
+                      returnURL: "https://samplesite.com/return",
+                      cancelURL: "https://samplesite.com/cancel",
+                      transactions: const [
+                        {
+                          "amount": {
+                            "total": '20',
+                            "currency": "USD",
+                            "details": {
+                              "subtotal": '10.12',
+                              "shipping": '0',
+                              "shipping_discount": 0
+                            }
+                          },
+                          "description": "The payment for sign up.",
+                          "item_list": {
+                            "items": [
+                              {
+                                "name": "registration",
+                                "quantity": 1,
+                                "price": '20',
+                                "currency": "USD"
+                              }
+                            ],
+                          }
+                        }
+                      ],
+                      note: "Contact us for any questions on your order.",
+                      onSuccess: (Map params) async {
+                        print("onSuccess: $params");
+                        setState(() {
+                          paymentStatus = true;
+                        });
+                      },
+                      onError: (error) {
+                        print("onError: $error");
+                      },
+                      onCancel: (params) {
+                        print('cancelled: $params');
+                        setState(() {
+                          paymentStatus = true;
+                        });
+                      }),
                 ),
               );
             },
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Bio',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 40,
-                height: 50,
-                child: CustomTextField(
-                  isObsecure: false,
-                  editingController: authenticationController.bioController,
-                  labelText: "bio",
-                  iconData: Icons.person,
+            child: const Row(
+              children: [
+                SizedBox(
+                  width: 10,
                 ),
-              ),
-            ],
-          )
+                Icon(Icons.paypal),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  "PayPal",
+                  style: TextStyle(fontSize: 18),
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 80,
+          ),
+          CheckboxUic(
+            initialValue: false,
+            title: 'Term And Pervicy',
+            description: 'Accepted term and pravicy',
+            descriptionUnchecked:
+                'You need to accept term and privecy to continue'
+                '',
+            onChanged: (value) {
+              term = value;
+            },
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          Center(
+            child: Container(
+                width: MediaQuery.of(context).size.width - 150,
+                height: 50,
+                decoration: const BoxDecoration(
+                    color: Colors.pink,
+                    borderRadius: BorderRadius.all(Radius.circular(12))),
+                child: TextButton(
+                  child: const Text(
+                    'Submit',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  onPressed: () {
+                    if (term == true && paymentStatus == true) {
+                      if (authenticationController.selectedInterests != null &&
+                          authenticationController.bioController.text
+                              .trim()
+                              .isNotEmpty) {
+                        authenticationController.createNewUser(
+                            authenticationController.profileImage!,
+                            authenticationController.ageController.text.trim(),
+                            authenticationController.nameController.text
+                                .trim()
+                                .toUpperCase(),
+                            authenticationController.emailController.text
+                                .trim(),
+                            authenticationController.passwordController.text
+                                .trim(),
+                            authenticationController.genderController.text
+                                .toLowerCase(),
+                            authenticationController.phoneController.text
+                                .trim(),
+                            authenticationController.cityController.text
+                                .trim()
+                                .toUpperCase(),
+                            authenticationController.countryController.text
+                                .trim()
+                                .toUpperCase(),
+                            authenticationController.stateController.text
+                                .trim()
+                                .toUpperCase(),
+                            authenticationController.professionController.text
+                                .trim(),
+                            authenticationController.religionController.text
+                                .trim(),
+                            authenticationController.selectedInterests,
+                            authenticationController.lookingForController.text
+                                .trim()
+                                .toUpperCase(),
+                            authenticationController.bioController.text.trim(),
+                            paymentStatus);
+                      } else {
+                        // Get.to(ThirdPage());
+                      }
+                    } else {
+                      alert(
+                        context,
+                        'Term And Privacy',
+                        'To register you need to accept term and privacy',
+                        variant: Variant.danger,
+                      );
+                    }
+                  },
+                )),
+          ),
         ],
       ),
     ));

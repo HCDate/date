@@ -3,9 +3,10 @@
    <uses-permission android:name="android.permission.RECORD_AUDIO" />
    <uses-permission android:name="android.permission.INTERNET"/>
     <application
+       android:name="${applicationName}"
+        android:icon="@mipmap/lovelogo"
         android:label="date"
-        android:name="${applicationName}"
-        android:icon="@mipmap/lovelogo">
+        tools:replace="android:label">
         <activity
             android:name=".MainActivity"
             android:exported="true"

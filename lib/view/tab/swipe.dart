@@ -147,37 +147,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  "Habesha",
-                  style: TextStyle(color: Colors.pink, fontSize: 17),
-                ),
-                SizedBox(
-                  width: 4,
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 50,
-                ),
-                Text(
-                  "dating",
-                  style: TextStyle(color: Colors.pink, fontSize: 17),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [],
-      ),
       body: SafeArea(
         child: Obx(() {
           final profileList = profileController.allUsersProfileList;
@@ -189,7 +158,15 @@ class _SwipeScreenState extends State<SwipeScreen> {
               : Stack(
                   children: [
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 24, top: 8),
+                          child: Text(
+                            "Habesha\nChristian\nMingle",
+                            style: TextStyle(color: Colors.pink, fontSize: 17),
+                          ),
+                        ),
                         Flexible(
                           child: CardSwiper(
                             isLoop: false,
