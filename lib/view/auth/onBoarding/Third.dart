@@ -1,17 +1,16 @@
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:country_state_city_picker/country_state_city_picker.dart';
 import 'package:date/view/auth/onBoarding/Fourth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:get/get.dart';
-import 'package:uic/checkbox_uic.dart';
 import 'package:uic/step_indicator.dart';
 
 import '../../../controller/auth_controller.dart';
 import '../../../services/interest.dart';
 
 import '../../../widgets/custom_text_field.dart';
+import 'package:uic/widgets/action_button.dart';
 
 class ThirdPage extends StatefulWidget {
   const ThirdPage({super.key});
@@ -45,17 +44,12 @@ class _ThirdPageState extends State<ThirdPage> {
       // Add
     ];
 
-    // List<bool> selectedList =
-    //     List.generate(availableInterests.length, (index) => false);
-    // final _items = availableInterests
-    //     .map((interest) => MultiSelectItem<Interest>(interest, interest.name))
-    //     .toList();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
             StepIndicator(
@@ -194,19 +188,43 @@ class _ThirdPageState extends State<ThirdPage> {
                 iconData: Icons.person,
               ),
             ),
-            CheckboxUic(
-              initialValue: false,
-              title: 'Term And Pervicy',
-              description: 'Accept term and pravicy',
-              descriptionUnchecked:
-                  'You need to accept term and privecy to continue'
-                  '',
-              onChanged: (value) {
-                term = value;
-              },
-            ),
             SizedBox(
-              height: 60,
+              height: 20,
+            ),
+            Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width - 150,
+                height: 50,
+                decoration: BoxDecoration(
+                    color: Colors.pink,
+                    borderRadius: BorderRadius.all(Radius.circular(12))),
+                child: ActionButton(
+                  action: () async {
+                    Future.delayed(Duration(seconds: 5));
+                    if (authenticationController.selectedInterests != null &&
+                        authenticationController.bioController.text
+                            .trim()
+                            .isNotEmpty &&
+                        authenticationController.lookingForController.text
+                            .trim()
+                            .isNotEmpty) {
+                      Get.to(FourthPage());
+                    } else {
+                      alert(
+                        context,
+                        'Fill Values',
+                        'All value must be Field',
+                        variant: Variant.warning,
+                      );
+                    }
+                    // Get.to(ThirdPage());
+                  },
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
