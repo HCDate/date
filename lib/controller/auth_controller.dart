@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date/global.dart';
+import 'package:date/view/SplashScreen.dart';
 import 'package:date/view/auth/AuthScreen.dart';
 import 'package:date/view/auth/onBoarding/First.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +12,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 import '../models/person.dart' as personModel;
+import '../view/auth/onBoarding/Fourth.dart';
 import '../view/home/home_screen.dart';
 
 class AuthenticationController extends GetxController {
@@ -31,6 +34,7 @@ class AuthenticationController extends GetxController {
   TextEditingController professionController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   TextEditingController lookingForController = TextEditingController();
+  TextEditingController imageProfileController = TextEditingController();
 
   final List<String> _selectedInterests = [];
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -41,8 +45,10 @@ class AuthenticationController extends GetxController {
     if (imageFile != null) {
       Get.snackbar(
           "Profile Image", "you have successfully picked your profile image");
+      pickedFile = Rx<File?>(File(imageFile!.path));
+      imageProfileController.text =
+          await uploadImageToStorage(pickedFile.value!);
     }
-    pickedFile = Rx<File?>(File(imageFile!.path));
   }
 
   captureImageFromPhone() async {
@@ -50,15 +56,23 @@ class AuthenticationController extends GetxController {
     if (imageFile != null) {
       Get.snackbar("Profile Image",
           "you have successfully picked your profile image using camera");
+      pickedFile = Rx<File?>(File(imageFile!.path));
+      imageProfileController.text =
+          await uploadImageToStorage(pickedFile.value!);
     }
-    pickedFile = Rx<File?>(File(imageFile!.path));
   }
 
   Future<String> uploadImageToStorage(File imageFile) async {
+    // Check file size before upload
+    if (imageFile.lengthSync() > 4 * 1024 * 1024) {
+      throw Exception("Image file exceeds 4MB limit");
+    }
+
     Reference reference = FirebaseStorage.instance
         .ref()
         .child("profile Images")
         .child(FirebaseAuth.instance.currentUser!.uid);
+
     UploadTask task = reference.putFile(imageFile);
     TaskSnapshot snapshot = await task;
     String downloadUrlOfImage = await snapshot.ref.getDownloadURL();
@@ -66,11 +80,10 @@ class AuthenticationController extends GetxController {
   }
 
   createNewUser(
-      File imageProfile,
+      String imageProfile,
       String age,
       String name,
       String email,
-      String password,
       String? gender,
       String phoneNo,
       String city,
@@ -88,10 +101,10 @@ class AuthenticationController extends GetxController {
       // if (kDebugMode) {
       //   print("$userCredential");
       // }
-      String urlOfDownloadedImage = await uploadImageToStorage(imageProfile);
+
       personModel.Person person = personModel.Person(
           uid: FirebaseAuth.instance.currentUser!.uid,
-          imageProfile: urlOfDownloadedImage,
+          imageProfile: imageProfile,
           email: email,
           age: int.parse(age),
           gender: gender,
@@ -106,7 +119,7 @@ class AuthenticationController extends GetxController {
           interests: interests,
           lookingFor: lookingFor,
           bio: bio,
-          paymentStatus: paymentStatus);
+          paymentStatus: true);
       await FirebaseFirestore.instance
           .collection("users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -114,6 +127,19 @@ class AuthenticationController extends GetxController {
       Get.snackbar(
           "Account Creation successful", "Account created successfully");
       Get.to(HomeScreen());
+      genderController.clear();
+      nameController.clear();
+      cityController.clear();
+      countryController.clear();
+      stateController.clear();
+      professionController.clear();
+      religionController.clear();
+      imageProfileController.clear();
+      emailController.clear();
+      lookingForController.clear();
+      bioController.clear();
+      ageController.clear();
+      genderController.clear();
     } catch (errorMsg) {
       if (kDebugMode) {
         print("$errorMsg");
@@ -137,9 +163,9 @@ class AuthenticationController extends GetxController {
 
   checkIfUserIsLoggedIn(User? currentUser) {
     if (currentUser == null) {
-      Get.to(AuthScreen());
+      Get.to(SplashScreen());
     } else {
-      Get.to(HomeScreen());
+      Get.to(const HomeScreen());
     }
   }
 
@@ -229,6 +255,7 @@ class AuthenticationController extends GetxController {
   }
 
   // @override
+  @override
   void onReady() {
     // TODO: implement onReady
     super.onReady();

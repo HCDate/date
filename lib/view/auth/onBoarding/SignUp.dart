@@ -22,6 +22,7 @@ class _SignUpState extends State<SignUp> {
       AuthenticationController.authenticationController;
   Future signInWithGoogle() async {
     // Trigger the authentication flow
+    final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser != null) {
       try {
@@ -34,11 +35,19 @@ class _SignUpState extends State<SignUp> {
         final User userDetails =
             (await FirebaseAuth.instance.signInWithCredential(credential))
                 .user!;
-        authenticationController.nameController.text =
-            userDetails.displayName ?? '';
-        authenticationController.emailController.text = userDetails.email ?? '';
-        // authenticationController.profileImage.toString()=userDetails.photoURL;
-        Get.to(FirstPage());
+        final bool isUserRegistered =
+            await authenticationController.isRegisteredUser(userDetails.uid);
+        if (isUserRegistered) {
+          await FirebaseAuth.instance.signOut();
+          await googleSignIn.signOut();
+        } else {
+          authenticationController.nameController.text =
+              userDetails.displayName ?? '';
+          authenticationController.emailController.text =
+              userDetails.email ?? '';
+          // authenticationController.profileImage.toString()=userDetails.photoURL;
+          Get.to(FirstPage());
+        }
 
         print(userDetails.uid);
       } on FirebaseAuthException catch (e) {}
@@ -62,56 +71,60 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-        top: 0,
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/images/splash.jpg'),
-                  fit: BoxFit.cover)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Spacer(),
-              _buildTextSection(),
-              const SizedBox(
-                height: 50,
+    return Stack(
+      children: [
+        Positioned.fill(
+            top: 0,
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/images/splash.jpg'),
+                      fit: BoxFit.cover)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Spacer(),
+                  _buildTextSection(),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  _buildButtonSection(
+                    context: context,
+                    label: "Sign Up With Google",
+                    onPressed: () => signInWithGoogle(),
+                    color: Colors.white,
+                    textColor: Colors.black,
+                    Icon: const Icon(
+                      SimpleIcons.google,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _buildButtonSection(
+                    context: context,
+                    label: "Sign Up with Phone Number",
+                    onPressed: () => Get.to(PhoneVerification()),
+                    color: Colors.pink,
+                    textColor: Colors.white,
+                    Icon: const Icon(
+                      Icons.phone,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  SizedBox(
+                    height: 100,
+                  ),
+                ],
               ),
-              _buildButtonSection(
-                context: context,
-                label: "Sign Up With Google",
-                onPressed: () => signInWithGoogle(),
-                color: Colors.white,
-                textColor: Colors.black,
-                Icon: const Icon(
-                  SimpleIcons.google,
-                  color: Colors.green,
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              _buildButtonSection(
-                context: context,
-                label: "Sign Up with Phone Number",
-                onPressed: () => Get.to(PhoneVerification()),
-                color: Colors.pink,
-                textColor: Colors.white,
-                Icon: const Icon(
-                  Icons.phone,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(
-                height: 50,
-              ),
-              SizedBox(
-                height: 100,
-              ),
-            ],
-          ),
-        ));
+            ))
+      ],
+    );
   }
 
   Widget _buildTextSection() {

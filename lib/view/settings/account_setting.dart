@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:async_button/async_button.dart';
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date/global.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_number_field/flutter_phone_number_field.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:text_area/text_area.dart';
 
 import '../../controller/auth_controller.dart';
 import '../../controller/message_controller.dart';
@@ -25,6 +27,8 @@ class AccountSettingScreen extends StatefulWidget {
 }
 
 class _AccountSettingScreenState extends State<AccountSettingScreen> {
+  var reasonValidation = true;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   List<Interest> availableInterests = [
     Interest(name: 'Photography', image: 'assets/images/camera.png'),
     Interest(name: 'Shopping', image: 'assets/images/weixin-market.png'),
@@ -42,7 +46,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
   ];
   var authenticationController =
       AuthenticationController.authenticationController;
-  bool uploading = false, next = false;
+  bool uploading = false, next = true;
   final ChatController _chatController = ChatController();
   final List<File> _image = [];
   List<String> urlsList = [];
@@ -62,17 +66,13 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
   String profession = "";
 
   String religion = "";
-  String urlImage1 =
-      "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
-  String urlImage2 =
-      "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
-  String urlImage3 =
-      "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
-  String urlImage4 =
-      "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
-  String urlImage5 =
-      "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
+  String urlImage1 = "";
+  String urlImage2 = "";
+  String urlImage3 = "";
+  String urlImage4 = "";
+  String urlImage5 = "";
   String? selectedGender;
+  AsyncBtnStatesController btnStateController = AsyncBtnStatesController();
   chooseImage() async {
     XFile? pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -87,11 +87,14 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       setState(() {
         val = i / _image.length;
       });
-      await _chatController.deleteImageFromStorage(urlImage1);
-      await _chatController.deleteImageFromStorage(urlImage2);
-      await _chatController.deleteImageFromStorage(urlImage3);
-      await _chatController.deleteImageFromStorage(urlImage4);
-      await _chatController.deleteImageFromStorage(urlImage5);
+      if (img.lengthSync() > 4 * 1024 * 1024) {
+        // Check for 4MB size limit
+        // Display a message indicating the file is too large
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Image size exceeds 4MB limit.")),
+        );
+        continue; // Skip to the next image
+      }
       var refImage = FirebaseStorage.instance.ref().child(
           "images/${DateTime.now().millisecondsSinceEpoch.toString()}.jpg");
       await refImage.putFile(img).whenComplete(() async {
@@ -134,17 +137,38 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
           List<String> interests =
               List<String>.from(snapshot.get('interests') ?? []);
           authenticationController.selectedInterests = interests;
-          urlImage1 = snapshot.data()!["urlImage1"];
-          urlImage2 = snapshot.data()!["urlImage2"];
-          urlImage3 = snapshot.data()!["urlImage3"];
-          urlImage4 = snapshot.data()!["urlImage4"];
-          urlImage5 = snapshot.data()!["urlImage5"];
+          if (snapshot.data()!["urlImage1"] != null) {
+            setState(() {
+              urlImage1 = snapshot.data()!["urlImage1"];
+              urlImage2 = snapshot.data()!["urlImage2"];
+              urlImage3 = snapshot.data()!["urlImage3"];
+              urlImage4 = snapshot.data()!["urlImage4"];
+              urlImage5 = snapshot.data()!["urlImage5"];
+            });
+          }
         });
       }
     });
   }
 
-  updateUserData(String name, String phoneNo, List interests) async {
+  updateUserDataWithOutImage(String name, String phoneNo, String profession,
+      String bio, List interests) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'name': name,
+      'phoneNo': phoneNo,
+      'profession': profession,
+      'bio': bio,
+      'interests': interests
+    });
+    toast(context, 'Confirmed', variant: Variant.success);
+    Get.to(HomeScreen());
+  }
+
+  updateUserData(String name, String phoneNo, String profession, String bio,
+      List interests) async {
     showDialog(
         context: context,
         builder: (context) {
@@ -175,6 +199,8 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
         .update({
       'name': name,
       'phoneNo': phoneNo,
+      'profession': profession,
+      'bio': bio,
       'urlImage1': urlsList[0].toString(),
       'urlImage2': urlsList[1].toString(),
       'urlImage3': urlsList[2].toString(),
@@ -182,6 +208,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       'urlImage5': urlsList[4].toString(),
       'interests': interests
     });
+
     // Get.snackbar("Updated", "your account has been updated");
     toast(context, 'Confirmed', variant: Variant.success);
     Get.to(HomeScreen());
@@ -192,11 +219,37 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
     });
   }
 
+  update() async {
+    if (authenticationController.nameController.text.trim().isNotEmpty) {
+      _image.isNotEmpty
+          ? updateUserData(
+              authenticationController.nameController.text.trim(),
+              authenticationController.phoneController.text.trim(),
+              authenticationController.professionController.text.trim(),
+              authenticationController.bioController.text.trim(),
+              authenticationController.selectedInterests)
+          : updateUserDataWithOutImage(
+              authenticationController.nameController.text.trim(),
+              authenticationController.phoneController.text.trim(),
+              authenticationController.professionController.text.trim(),
+              authenticationController.bioController.text.trim(),
+              authenticationController.selectedInterests);
+    } else {
+      Get.snackbar(
+          "A Field is Empty", "please fill out all field in text field");
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     retrieveUserData();
+    authenticationController.bioController.addListener(() {
+      setState(() {
+        reasonValidation = authenticationController.bioController.text.isEmpty;
+      });
+    });
   }
 
   @override
@@ -207,7 +260,11 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              Get.back();
+              next
+                  ? Get.back()
+                  : setState(() {
+                      next = true;
+                    });
             },
             icon: const Icon(
               Icons.navigate_before_outlined,
@@ -220,28 +277,18 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
           ),
           actions: [
             next
-                ? Container()
-                : IconButton(
+                ? IconButton(
                     onPressed: () async {
-                      if (_image.length == 5) {
-                        setState(() {
-                          uploading = false;
-                          next = true;
-                        });
-                      } else {
-                        Get.snackbar("5 images", 'please choose 5 images');
-                        alert(
-                          context,
-                          '5 images',
-                          'please choose 5 images',
-                          variant: Variant.info,
-                        );
-                      }
+                      setState(() {
+                        uploading = false;
+                        next = false;
+                      });
                     },
                     icon: const Icon(
                       Icons.navigate_next_outlined,
                       size: 36,
                     ))
+                : Container()
           ]),
       body: next
           ? SingleChildScrollView(
@@ -249,9 +296,6 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                 padding: const EdgeInsets.all(30),
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
                     const Text(
                       "Personal Info:",
                       style: TextStyle(
@@ -320,35 +364,6 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                       child: CustomTextField(
                         isObsecure: false,
                         editingController:
-                            authenticationController.cityController,
-                        labelText: "City",
-                        iconData: Icons.location_city,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 40,
-                      height: 50,
-                      child: CustomTextField(
-                        isObsecure: false,
-                        editingController:
-                            authenticationController.countryController,
-                        labelText: "Country",
-                        iconData: Icons.location_city,
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 40,
-                      height: 50,
-                      child: CustomTextField(
-                        isObsecure: false,
-                        editingController:
                             authenticationController.professionController,
                         labelText: "Profession",
                         iconData: Icons.business_center,
@@ -360,29 +375,20 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width - 40,
-                      height: 50,
-                      child: CustomTextField(
-                        isObsecure: false,
-                        editingController:
-                            authenticationController.religionController,
-                        labelText: "Religion",
-                        iconData: CupertinoIcons.checkmark_seal_fill,
+                      height: 150,
+                      child: Form(
+                        key: formKey,
+                        child: TextArea(
+                          borderRadius: 10,
+                          borderColor: const Color(0xFFCFD6FF),
+                          textEditingController:
+                              authenticationController.bioController,
+                          validation: reasonValidation,
+                          errorText: 'Please type a short bio!',
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 40,
-                      height: 50,
-                      child: CustomTextField(
-                        isObsecure: false,
-                        editingController:
-                            authenticationController.bioController,
-                        labelText: "Bio",
-                        iconData: CupertinoIcons.checkmark_seal_fill,
-                      ),
-                    ),
+
                     const SizedBox(
                       height: 15,
                     ),
@@ -451,40 +457,22 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width - 30,
-                      height: 50,
-                      decoration: const BoxDecoration(
-                          color: Colors.pink,
-                          borderRadius: BorderRadius.all(Radius.circular(12))),
-                      child: InkWell(
-                        onTap: () {
-                          if (authenticationController.nameController.text
-                              .trim()
-                              .isNotEmpty) {
-                            _image.isNotEmpty
-                                ? updateUserData(
-                                    authenticationController.nameController.text
-                                        .trim(),
-                                    authenticationController
-                                        .phoneController.text
-                                        .trim(),
-                                    authenticationController.selectedInterests)
-                                : null;
-                          } else {
-                            Get.snackbar("A Field is Empty",
-                                "please fill out all field in text field");
-                          }
-                        },
-                        child: const Center(
-                            child: Text(
-                          "Update",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        )),
-                      ),
+                    AsyncElevatedBtn.withDefaultStyles(
+                      sizeAnimationClipper: Clip.antiAliasWithSaveLayer,
+                      switchInAnimationCurve: Curves.bounceOut,
+                      asyncBtnStatesController: btnStateController,
+                      onPressed: () async {
+                        btnStateController.update(AsyncBtnState.loading);
+                        try {
+                          // Await your api call here
+                          await update();
+                          await Future.delayed(const Duration(seconds: 10));
+                          btnStateController.update(AsyncBtnState.success);
+                        } catch (e) {
+                          btnStateController.update(AsyncBtnState.failure);
+                        }
+                      },
+                      child: const Text('Update'),
                     ),
 
                     const SizedBox(
@@ -536,7 +524,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                                         fit: BoxFit.cover)),
                               );
                       }),
-                )
+                ),
               ],
             ),
     );

@@ -4,6 +4,7 @@ import 'package:bilions_ui/bilions_ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date/controller/profile_controller.dart';
 import 'package:date/global.dart';
+import 'package:date/view/home/home_screen.dart';
 import 'package:date/view/settings/account_setting.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_image_slider/carousel.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../controller/auth_controller.dart';
 import '../auth/login/login_screen.dart';
 
 // ignore: must_be_immutable
@@ -26,6 +28,8 @@ class UserDetailScreen extends StatefulWidget {
 
 class _UserDetailScreenState extends State<UserDetailScreen>
     with TickerProviderStateMixin {
+  var authenticationController =
+      AuthenticationController.authenticationController;
   List interests = [];
   String name = '';
   String age = '';
@@ -54,6 +58,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
       "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
   String urlImage5 =
       "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
+
   retrieveUserInfo() async {
     await FirebaseFirestore.instance
         .collection("users")
@@ -131,7 +136,29 @@ class _UserDetailScreenState extends State<UserDetailScreen>
     });
   }
 
+  updateProfilePhoto(String imageProfile) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(widget.userID)
+        .update({
+      'imageProfile': imageProfile.toString(),
+    });
+    toast(context, 'Profile Changed', variant: Variant.success);
+    Get.to(const HomeScreen());
+  }
+
   final GoogleSignIn googleSignIn = GoogleSignIn();
+  void logout() async {
+    try {
+      await googleSignIn.signOut();
+      await FirebaseAuth.instance.signOut();
+      Get.offAll(const LoginScreen());
+    } catch (error) {
+      // Handle logout error
+      print("Error during logout: $error"); // Log the error for debugging
+      // You can also show a user-friendly error message using a snackbar or dialog
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,37 +207,91 @@ class _UserDetailScreenState extends State<UserDetailScreen>
             widget.userID == FirebaseAuth.instance.currentUser!.uid
                 ? Row(
                     children: [
-                      IconButton(
-                          onPressed: () {
-                            Get.to(const AccountSettingScreen());
-                          },
-                          icon: const Icon(
-                            Icons.settings,
-                            size: 30,
-                          )),
-                      IconButton(
-                          onPressed: () async {
-                            confirm(
-                              context,
-                              ConfirmDialog(
-                                'Are you sure?',
-                                message: 'Are you sure to Log out?',
-                                variant: Variant.warning,
-                                confirmed: () async {
-                                  // do something here
-                                  try {
-                                    await googleSignIn.signOut();
-                                    await FirebaseAuth.instance.signOut();
-                                    Get.offAll(const LoginScreen());
-                                  } catch (e) {}
-                                },
+                      PopupMenuButton(
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                          PopupMenuItem(
+                            onTap: () async {},
+                            value: 'Option 1',
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.to(const AccountSettingScreen());
+                              },
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        Get.to(const AccountSettingScreen());
+                                      },
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        size: 20,
+                                      )),
+                                  const Text("Edit User Detail")
+                                ],
                               ),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.logout,
-                            size: 30,
-                          ))
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () async {},
+                            value: 'Option 2',
+                            child: GestureDetector(
+                              onTap: () async {
+                                await authenticationController
+                                    .pickImageFileFromGallery();
+                                if (authenticationController
+                                    .imageProfileController.text
+                                    .trim()
+                                    .isNotEmpty) {
+                                  updateProfilePhoto(authenticationController
+                                      .imageProfileController.text
+                                      .trim());
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        Get.to(const AccountSettingScreen());
+                                      },
+                                      icon: const Icon(
+                                        Icons.photo,
+                                        size: 20,
+                                      )),
+                                  Text("Set Profile Photo")
+                                ],
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () async {
+                              confirm(
+                                context,
+                                ConfirmDialog(
+                                  'Are you sure?',
+                                  message: 'Are you sure to Log out?',
+                                  variant: Variant.warning,
+                                  confirmed: () async {
+                                    // do something here
+                                    logout();
+                                  },
+                                ),
+                              );
+                            },
+                            value: 'Option 2',
+                            child: Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () async {},
+                                    icon: const Icon(
+                                      Icons.logout,
+                                      size: 20,
+                                    )),
+                                Text("Log out")
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   )
                 : Container()
@@ -242,7 +323,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20),
                         ),
-                        Center(child: Text(profession))
+                        Center(child: Text(profession.toUpperCase()))
                       ],
                     ),
                   ],
@@ -357,7 +438,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
-                            Text(profession)
+                            Text(profession.toUpperCase())
                           ],
                         ),
                         Column(
@@ -366,6 +447,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                           children: [
                             const Text(
                               "Bio",
+                              maxLines: 6,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),

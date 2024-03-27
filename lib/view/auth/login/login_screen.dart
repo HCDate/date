@@ -27,26 +27,27 @@ class _LoginScreenState extends State<LoginScreen> {
       AuthenticationController.authenticationController;
   Future signInWithGoogle() async {
     // Trigger the authentication flow
+    final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser != null) {
       final bool isUserRegistered =
           await authenticationController.isRegisteredUser(googleUser.id);
       try {
-        if (isUserRegistered) {
-          final GoogleSignInAuthentication? googleAuth =
-              await googleUser?.authentication;
-          final credential = GoogleAuthProvider.credential(
-            accessToken: googleAuth?.accessToken,
-            idToken: googleAuth?.idToken,
-          );
-          final User userDetails =
-              (await FirebaseAuth.instance.signInWithCredential(credential))
-                  .user!;
-          authenticationController.nameController.text =
-              userDetails.displayName ?? '';
-          authenticationController.emailController.text =
-              userDetails.email ?? '';
-        } else {
+        final GoogleSignInAuthentication? googleAuth =
+            await googleUser?.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+        final User userDetails =
+            (await FirebaseAuth.instance.signInWithCredential(credential))
+                .user!;
+
+        final bool isUserRegistered =
+            await authenticationController.isRegisteredUser(userDetails.uid);
+        if (!isUserRegistered) {
+          await googleSignIn.signOut();
+          await FirebaseAuth.instance.signOut();
           alert(
             context,
             'User Not found',
@@ -77,9 +78,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-        top: 0,
-        child: DecoratedBox(
+    return Stack(
+      children: [
+        Positioned.fill(
+            child: DecoratedBox(
           decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/images/splash.jpg'),
@@ -126,7 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-        ));
+        ))
+      ],
+    );
   }
 
   Widget _buildButtonSection(

@@ -137,10 +137,19 @@ class _PhoneLoginState extends State<PhoneLogin> {
                                               onPressed: () {
                                                 if (_formKey.currentState!
                                                     .validate()) {
-                                                  authenticationController
-                                                      .loginOtp(
-                                                          otp: _otpController
-                                                              .text);
+                                                  final String res =
+                                                      authenticationController
+                                                          .loginOtp(
+                                                              otp: _otpController
+                                                                  .text) as String;
+                                                  if (res == "NotRegistered") {
+                                                    alert(
+                                                      context,
+                                                      'Error',
+                                                      'User Not Registered',
+                                                      variant: Variant.danger,
+                                                    );
+                                                  }
                                                 }
                                               },
                                               child: const Text("Submit"))

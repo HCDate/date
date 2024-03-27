@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:uuid/uuid.dart';
 import 'package:date/models/chat.dart'; // Import your Chat model or relevant model
@@ -51,9 +52,27 @@ class NewChatPage extends StatelessWidget {
         future: _chatController
             .getUsersWithoutChat(FirebaseAuth.instance.currentUser!.uid),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator(
+              color: Colors.pink,
+            ));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            // Display a user-friendly message when the chat list is empty
+
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'You have no chats Maches',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ],
+              ),
+            );
           }
+
           final users = snapshot.data!;
           return ListView.builder(
             itemCount: users.length,

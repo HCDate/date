@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:text_area/text_area.dart';
 import 'package:uic/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../../widgets/custom_text_field.dart';
@@ -20,30 +21,23 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    final user = await FirebaseAuth.instance.signInWithCredential(credential);
-    print(user);
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+  var reasonValidation = true;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  var authenticationController =
+      AuthenticationController.authenticationController;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    authenticationController.bioController.addListener(() {
+      setState(() {
+        reasonValidation = authenticationController.bioController.text.isEmpty;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    var authenticationController =
-        AuthenticationController.authenticationController;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -149,6 +143,21 @@ class _FirstPageState extends State<FirstPage> {
                 height: 25,
               ),
               SizedBox(
+                width: MediaQuery.of(context).size.width - 40,
+                height: 150,
+                child: Form(
+                  key: formKey,
+                  child: TextArea(
+                    borderRadius: 10,
+                    borderColor: const Color(0xFFCFD6FF),
+                    textEditingController:
+                        authenticationController.bioController,
+                    validation: reasonValidation,
+                    errorText: 'Please type a short bio!',
+                  ),
+                ),
+              ),
+              SizedBox(
                 height: 20,
               ),
               Container(
@@ -164,16 +173,19 @@ class _FirstPageState extends State<FirstPage> {
                     ),
                     onPressed: () {
                       if (authenticationController.nameController.text
-                          .trim()
-                          .isEmpty) {
+                              .trim()
+                              .isEmpty ||
+                          authenticationController.bioController.text
+                              .trim()
+                              .isEmpty) {
                         alert(
                           context,
                           'Fill Value',
-                          'Full Name field must be Fielded',
+                          'Full Name or bio field field must be Fielded',
                           variant: Variant.warning,
                         );
                       } else {
-                        Get.to(SecondPage());
+                        Get.to(() => SecondPage());
                       }
                     },
                   )),

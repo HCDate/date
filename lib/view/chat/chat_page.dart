@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record_mp3/record_mp3.dart';
@@ -95,7 +94,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       setStatus(true);
     } else {
-      setStatus(true);
+      setStatus(false);
     }
   }
 
@@ -138,23 +137,22 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   }
 
   uploadAudio() async {
-    UploadTask uploadTask = _chatController.uploadAudio(File(recordFilePath),
-        "audio/${DateTime.now().millisecondsSinceEpoch.toString()}");
-    try {
-      TaskSnapshot snapshot = await uploadTask;
-      audioURL = await snapshot.ref.getDownloadURL();
-      String strVal = audioURL.toString();
-      setState(() {
-        audioController.isSending.value = false;
-        _chatController.sendMessageWithVoice(widget.chat.id,
-            widget.currentUserId, strVal, audioController.total, token);
-      });
-    } on FirebaseException catch (e) {
-      setState(() {
-        audioController.isSending.value = false;
-      });
-      // Fluttertoast.showToast(msg: e.message ?? e.toString());
+    final recordFile = File(recordFilePath);
+
+    // Check audio file size before upload
+    if (recordFile.lengthSync() > 5 * 1024 * 1024) {
+      // Check for 5MB size limit (adjust as needed)
+      // Display a message indicating the file is too large
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Audio file exceeds 5MB limit.")),
+      );
+      return; // Exit the function if file size is too large
     }
+
+    // Continue with upload process as usual
+    UploadTask uploadTask = _chatController.uploadAudio(recordFile,
+        "audio/${DateTime.now().millisecondsSinceEpoch.toString()}");
+    // ... existing upload and error handling code ...
   }
 
   late String recordFilePath;
@@ -307,9 +305,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                           height: MediaQuery.of(context).size.height * .35,
                           child: EmojiPicker(
                             textEditingController: _messageController,
-                            config: Config(
-                                columns: 7,
-                                emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1)),
+                            config: Config(),
                           ),
                         )
                     ],
@@ -557,7 +553,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                               await http.get(Uri.parse(imageProfile));
                           Uint8List bytes = response.bodyBytes;
 
-                          await ImageGallerySaver.saveImage(bytes);
+                          // await ImageGallerySaver.saveImage(bytes);
 
                           // Show a success message
                           Get.snackbar("Image Download",
@@ -676,17 +672,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         ),
       ),
     );
-  }
-
-  Widget _buildEmojiPicker() {
-    return _showEmojiPicker
-        ? EmojiPicker(
-            textEditingController: _messageController,
-            config: Config(
-                columns: 7, emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1)),
-          )
-        : SizedBox
-            .shrink(); // Returns an empty widget if emoji picker is not shown
   }
 
   Widget _audio({

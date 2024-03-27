@@ -34,9 +34,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
             Text(
               'Sign In with phone number',
               style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.pink,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18),
+                  fontSize: 20),
             ),
             SizedBox(
               height: 50,

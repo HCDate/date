@@ -21,23 +21,28 @@ class SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<SecondPage> {
+  var authenticationController =
+      AuthenticationController.authenticationController;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    authenticationController.genderController.clear();
+    authenticationController.ageController.clear();
+    authenticationController.religionController.clear();
+    authenticationController.professionController.clear();
   }
 
   FocusNode focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     String selectedGender = 'Select Gender';
-    var authenticationController =
-        AuthenticationController.authenticationController;
+
     ValueNotifier<String> genderNotifier =
         ValueNotifier<String>('Select Gender');
     int _age = 0;
 
-    DateTime? selectedDate = DateTime(2010, 12, 5);
+    DateTime? selectedDate = DateTime(2001, 12, 5);
     void calculateAge() {
       if (selectedDate != null) {
         DateTime today = DateTime.now();
@@ -47,7 +52,9 @@ class _SecondPageState extends State<SecondPage> {
                 today.day < selectedDate!.day)) {
           years--;
         }
-        print(selectedDate);
+        setState(() {
+          _age = years;
+        });
         authenticationController.ageController.text = years.toString();
         if (years <= 18) {
           alert(
@@ -101,9 +108,6 @@ class _SecondPageState extends State<SecondPage> {
             getWidget(true, false),
             const SizedBox(
               height: 35,
-            ),
-            const SizedBox(
-              height: 15,
             ),
             SizedBox(
               height: 50,
@@ -160,16 +164,16 @@ class _SecondPageState extends State<SecondPage> {
                     borderRadius: BorderRadius.all(Radius.circular(12))),
                 child: ActionButton(
                   action: () async {
-                    Future.delayed(Duration(seconds: 5));
+                    Future.delayed(Duration(seconds: 10));
                     if (authenticationController.genderController.text
                             .trim()
-                            .isEmpty &&
+                            .isEmpty ||
                         authenticationController.ageController.text
                             .trim()
-                            .isEmpty &&
+                            .isEmpty ||
                         authenticationController.religionController.text
                             .trim()
-                            .isEmpty &&
+                            .isEmpty ||
                         authenticationController.professionController.text
                             .trim()
                             .isEmpty) {

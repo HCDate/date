@@ -81,9 +81,13 @@ class _SwipeScreenState extends State<SwipeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(person.name.toString(),
-                    style:
-                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                TextButton(
+                    onPressed: () {
+                      Get.to(() => UserDetailScreen(userID: person.uid));
+                    },
+                    child: Text(person.name.toString(),
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.bold))),
                 Text(person.age.toString(), style: TextStyle(fontSize: 16.0)),
                 Text(
                   person.bio.toString(),
@@ -152,9 +156,16 @@ class _SwipeScreenState extends State<SwipeScreen> {
           final profileList = profileController.allUsersProfileList;
           return profileList.isEmpty
               ? Center(
-                  child: CircularProgressIndicator(
-                  color: Colors.pink,
-                ))
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'You have no get Maches for now!',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                )
               : Stack(
                   children: [
                     Column(
@@ -199,17 +210,33 @@ class _SwipeScreenState extends State<SwipeScreen> {
                       Center(
                         child: Column(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 300,
                             ),
-                            Center(
+                            const Center(
                               child: Text(
                                 "Your Matching Over",
                                 style: TextStyle(color: Colors.pink),
                               ),
                             ),
-                            Center(
-                                child: Text('Enjoy With already existed match'))
+                            const Center(
+                                child:
+                                    Text('Enjoy With already existed match')),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                _controller.undo();
+                                setState(() {
+                                  _swipeFinished = false;
+                                });
+                              },
+                              child: const Icon(
+                                Icons.rotate_left,
+                                size: 30,
+                              ),
+                            ),
                           ],
                         ),
                       ),

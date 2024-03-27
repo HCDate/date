@@ -10,40 +10,43 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      top: 0,
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/splash.jpg'),
-            fit: BoxFit.cover,
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/splash.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Spacer(),
+                _buildTextSection(),
+                const SizedBox(height: 50),
+                _buildButtonSection(
+                  context: context,
+                  label: 'Create Account',
+                  onPressed: () => Get.to(const SignUp()),
+                  color: Colors.pink,
+                ),
+                const SizedBox(height: 50),
+                _buildButtonSection(
+                  context: context,
+                  label: 'Sign In',
+                  onPressed: () => Get.to(const LoginScreen()),
+                  color: Colors.white,
+                  textColor: Colors.black,
+                ),
+                const SizedBox(height: 100),
+              ],
+            ),
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Spacer(),
-            _buildTextSection(),
-            const SizedBox(height: 50),
-            _buildButtonSection(
-              context: context,
-              label: 'Create Account',
-              onPressed: () => Get.to(const SignUp()),
-              color: Colors.pink,
-            ),
-            const SizedBox(height: 50),
-            _buildButtonSection(
-              context: context,
-              label: 'Sign In',
-              onPressed: () => Get.to(const LoginScreen()),
-              color: Colors.white,
-              textColor: Colors.black,
-            ),
-            const SizedBox(height: 100),
-          ],
-        ),
-      ),
+      ],
     );
   }
 
