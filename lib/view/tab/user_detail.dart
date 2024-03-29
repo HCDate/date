@@ -136,6 +136,46 @@ class _UserDetailScreenState extends State<UserDetailScreen>
     });
   }
 
+  Map<String, bool> menuItemStates = {
+    'Option 1': false,
+    'Option 2': false,
+    'Option 3': false,
+  };
+
+  void handleMenuItemClick(String menuItemValue) async {
+    setState(() {
+      menuItemStates[menuItemValue] = true;
+    });
+
+    // Perform action based on the clicked menu item
+    if (menuItemValue == 'Option 1') {
+      // Navigate to Edit User Detail screen
+      Get.to(const AccountSettingScreen());
+    } else if (menuItemValue == 'Option 2') {
+      // Update profile photo
+      await authenticationController.pickImageFileFromGallery();
+      if (authenticationController.imageProfileController.text
+          .trim()
+          .isNotEmpty) {
+        updateProfilePhoto(
+            authenticationController.imageProfileController.text.trim());
+      }
+    } else if (menuItemValue == "Option 3") {
+      confirm(
+        context,
+        ConfirmDialog(
+          'Are you sure?',
+          message: 'Are you sure to Log out?',
+          variant: Variant.warning,
+          confirmed: () async {
+            // do something here
+            logout();
+          },
+        ),
+      );
+    }
+  }
+
   updateProfilePhoto(String imageProfile) async {
     await FirebaseFirestore.instance
         .collection("users")
@@ -144,7 +184,9 @@ class _UserDetailScreenState extends State<UserDetailScreen>
       'imageProfile': imageProfile.toString(),
     });
     toast(context, 'Profile Changed', variant: Variant.success);
-    Get.to(const HomeScreen());
+    setState(() {
+      profilePicture = imageProfile;
+    });
   }
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -210,74 +252,49 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                       PopupMenuButton(
                         itemBuilder: (BuildContext context) => <PopupMenuEntry>[
                           PopupMenuItem(
-                            onTap: () async {},
+                            onTap: () async {
+                              if (menuItemStates['Option 1'] != null &&
+                                  !menuItemStates['Option 1']!) {
+                                handleMenuItemClick('Option 1');
+                              }
+                            },
                             value: 'Option 1',
-                            child: GestureDetector(
-                              onTap: () {
-                                Get.to(const AccountSettingScreen());
-                              },
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        Get.to(const AccountSettingScreen());
-                                      },
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        size: 20,
-                                      )),
-                                  const Text("Edit User Detail")
-                                ],
-                              ),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            onTap: () async {},
-                            value: 'Option 2',
-                            child: GestureDetector(
-                              onTap: () async {
-                                await authenticationController
-                                    .pickImageFileFromGallery();
-                                if (authenticationController
-                                    .imageProfileController.text
-                                    .trim()
-                                    .isNotEmpty) {
-                                  updateProfilePhoto(authenticationController
-                                      .imageProfileController.text
-                                      .trim());
-                                }
-                              },
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        Get.to(const AccountSettingScreen());
-                                      },
-                                      icon: const Icon(
-                                        Icons.photo,
-                                        size: 20,
-                                      )),
-                                  Text("Set Profile Photo")
-                                ],
-                              ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.edit,
+                                  size: 20,
+                                ),
+                                Text("Edit User Detail")
+                              ],
                             ),
                           ),
                           PopupMenuItem(
                             onTap: () async {
-                              confirm(
-                                context,
-                                ConfirmDialog(
-                                  'Are you sure?',
-                                  message: 'Are you sure to Log out?',
-                                  variant: Variant.warning,
-                                  confirmed: () async {
-                                    // do something here
-                                    logout();
-                                  },
-                                ),
-                              );
+                              if (menuItemStates['Option 2'] != null &&
+                                  !menuItemStates['Option 2']!) {
+                                handleMenuItemClick('Option 2');
+                              }
                             },
                             value: 'Option 2',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.photo,
+                                  size: 20,
+                                ),
+                                Text("Set Profile Photo")
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () async {
+                              if (menuItemStates['Option 3'] != null &&
+                                  !menuItemStates['Option 3']!) {
+                                handleMenuItemClick('Option 3');
+                              }
+                            },
+                            value: 'Option 3',
                             child: Row(
                               children: [
                                 IconButton(

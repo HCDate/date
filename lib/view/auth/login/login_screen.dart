@@ -28,10 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Future signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
+    await FirebaseAuth.instance.signOut();
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser != null) {
-      final bool isUserRegistered =
-          await authenticationController.isRegisteredUser(googleUser.id);
       try {
         final GoogleSignInAuthentication? googleAuth =
             await googleUser?.authentication;

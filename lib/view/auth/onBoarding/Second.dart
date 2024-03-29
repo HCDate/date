@@ -35,45 +35,36 @@ class _SecondPageState extends State<SecondPage> {
 
   FocusNode focusNode = FocusNode();
   @override
+  int age = 0;
+
+  DateTime? selectedDate = DateTime(2001, 12, 5);
+  calculateAge() {
+    if (selectedDate != null) {
+      DateTime today = DateTime.now();
+      int years = today.year - selectedDate!.year;
+      if (today.month < selectedDate!.month ||
+          (today.month == selectedDate!.month &&
+              today.day < selectedDate!.day)) {
+        years--;
+      }
+
+      authenticationController.ageController.text = years.toString();
+
+      setState(() {
+        age = years;
+      });
+    } else {
+      setState(() {
+        age = 0;
+      });
+    }
+  }
+
   Widget build(BuildContext context) {
     String selectedGender = 'Select Gender';
 
     ValueNotifier<String> genderNotifier =
         ValueNotifier<String>('Select Gender');
-    int _age = 0;
-
-    DateTime? selectedDate = DateTime(2001, 12, 5);
-    void calculateAge() {
-      if (selectedDate != null) {
-        DateTime today = DateTime.now();
-        int years = today.year - selectedDate!.year;
-        if (today.month < selectedDate!.month ||
-            (today.month == selectedDate!.month &&
-                today.day < selectedDate!.day)) {
-          years--;
-        }
-        setState(() {
-          _age = years;
-        });
-        authenticationController.ageController.text = years.toString();
-        if (years <= 18) {
-          alert(
-            context,
-            'Age Value',
-            'Age must be greater than 18',
-            variant: Variant.warning,
-          );
-        } else {
-          setState(() {
-            _age = years;
-          });
-        }
-      } else {
-        setState(() {
-          _age = 0;
-        });
-      }
-    }
 
     return Scaffold(
         body: SingleChildScrollView(
@@ -83,7 +74,7 @@ class _SecondPageState extends State<SecondPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
             StepIndicator(
@@ -102,7 +93,7 @@ class _SecondPageState extends State<SecondPage> {
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             getWidget(true, false),
@@ -152,19 +143,20 @@ class _SecondPageState extends State<SecondPage> {
                 iconData: Icons.work,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             Center(
               child: Container(
                 width: MediaQuery.of(context).size.width - 150,
                 height: 50,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.pink,
                     borderRadius: BorderRadius.all(Radius.circular(12))),
                 child: ActionButton(
                   action: () async {
                     Future.delayed(Duration(seconds: 10));
+                    calculateAge();
                     if (authenticationController.genderController.text
                             .trim()
                             .isEmpty ||
@@ -183,12 +175,19 @@ class _SecondPageState extends State<SecondPage> {
                         'All value must be Field',
                         variant: Variant.warning,
                       );
+                    } else if (age <= 18) {
+                      alert(
+                        context,
+                        'Fill Values',
+                        'Your age must greater than 18',
+                        variant: Variant.warning,
+                      );
                     } else {
-                      Get.to(ThirdPage());
+                      Get.to(const ThirdPage());
                     }
                     // Get.to(ThirdPage());
                   },
-                  child: Text(
+                  child: const Text(
                     'Continue',
                     style: TextStyle(color: Colors.white),
                   ),
@@ -205,7 +204,7 @@ class _SecondPageState extends State<SecondPage> {
     var authenticationController =
         AuthenticationController.authenticationController;
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 40),
+      margin: const EdgeInsets.symmetric(vertical: 40),
       alignment: Alignment.center,
       child: GenderPickerWithImage(
         showOtherGender: showOtherGender,
@@ -213,10 +212,10 @@ class _SecondPageState extends State<SecondPage> {
 
         // to show what's selected on app opens, but by default it's Male
         selectedGender: Gender.Male,
-        selectedGenderTextStyle:
-            TextStyle(color: Color(0xFF8b32a8), fontWeight: FontWeight.bold),
+        selectedGenderTextStyle: const TextStyle(
+            color: Color(0xFF8b32a8), fontWeight: FontWeight.bold),
         unSelectedGenderTextStyle:
-            TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+            const TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
         onChanged: (Gender? gender) {
           if (gender == Gender.Female) {
             authenticationController.genderController.text = 'female';

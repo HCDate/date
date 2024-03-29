@@ -88,7 +88,7 @@ class _ThirdPageState extends State<ThirdPage> {
               const SizedBox(
                 height: 30,
               ),
-              Text(
+              const Text(
                 'What you are looking for?',
                 style: TextStyle(
                     color: Colors.black,
@@ -126,17 +126,17 @@ class _ThirdPageState extends State<ThirdPage> {
                           selectedItem;
                     }),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
-              Text(
+              const Text(
                 'What you are interested in?',
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               SizedBox(
@@ -171,14 +171,14 @@ class _ThirdPageState extends State<ThirdPage> {
                           allSelectedItems;
                     }),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width - 150,
                   height: 50,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: Colors.pink,
                       borderRadius: BorderRadius.all(Radius.circular(12))),
                   child: ActionButton(
@@ -202,7 +202,7 @@ class _ThirdPageState extends State<ThirdPage> {
                       }
                       // Get.to(ThirdPage());
                     },
-                    child: Text(
+                    child: const Text(
                       'Continue',
                       style: TextStyle(color: Colors.white),
                     ),

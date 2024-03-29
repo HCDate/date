@@ -96,12 +96,6 @@ class AuthenticationController extends GetxController {
       String bio,
       bool? paymentStatus) async {
     try {
-      // UserCredential userCredential = await FirebaseAuth.instance
-      //     .createUserWithEmailAndPassword(email: email, password: password);
-      // if (kDebugMode) {
-      //   print("$userCredential");
-      // }
-
       personModel.Person person = personModel.Person(
           uid: FirebaseAuth.instance.currentUser!.uid,
           imageProfile: imageProfile,
@@ -126,7 +120,7 @@ class AuthenticationController extends GetxController {
           .set(person.toJson());
       Get.snackbar(
           "Account Creation successful", "Account created successfully");
-      Get.to(HomeScreen());
+      Get.to(const HomeScreen());
       genderController.clear();
       nameController.clear();
       cityController.clear();
@@ -154,18 +148,25 @@ class AuthenticationController extends GetxController {
           .signInWithEmailAndPassword(email: emailUser, password: passwordUser);
       Get.snackbar("Login Successfull", "logged-in successfully");
 
-      Get.to(HomeScreen());
+      Get.to(const HomeScreen());
     } catch (error) {
       Get.snackbar("Login Unsuccessful",
           "Error occurred during signin authentication:${error}");
     }
   }
 
-  checkIfUserIsLoggedIn(User? currentUser) {
+  checkIfUserIsLoggedIn(User? currentUser) async {
     if (currentUser == null) {
-      Get.to(SplashScreen());
+      Get.to(const SplashScreen());
     } else {
-      Get.to(const HomeScreen());
+      bool isUserRegistered = await isRegisteredUser(currentUser.uid);
+      if (isUserRegistered) {
+        Get.to(const HomeScreen());
+      } else {
+        // Navigate to a different screen for unregistered users, or handle as needed
+        Get.to(
+            const AuthScreen()); // For example, navigating to the authentication screen
+      }
     }
   }
 
@@ -201,8 +202,6 @@ class AuthenticationController extends GetxController {
     try {
       final user = await _firebaseAuth.signInWithCredential(cred);
       if (user.user != null) {
-        // return "Success";
-        print(cred.providerId);
         Get.to(FirstPage());
       } else {
         return "Error in otp login";
@@ -223,7 +222,7 @@ class AuthenticationController extends GetxController {
         final user = await _firebaseAuth.signInWithCredential(cred);
         if (user.user != null) {
           // return "Success";
-          Get.to(HomeScreen());
+          Get.to(const HomeScreen());
         } else {
           return "Error ";
         }
@@ -257,7 +256,6 @@ class AuthenticationController extends GetxController {
   // @override
   @override
   void onReady() {
-    // TODO: implement onReady
     super.onReady();
     firebaseCurrentUser = Rx<User?>(FirebaseAuth.instance.currentUser);
     firebaseCurrentUser.bindStream(FirebaseAuth.instance.authStateChanges());
