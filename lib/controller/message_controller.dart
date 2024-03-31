@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -72,7 +71,7 @@ class ChatController {
       } else {
         Reference reference = FirebaseStorage.instance
             .ref()
-            .child("profile Images")
+            .child("Images")
             .child(FirebaseAuth.instance.currentUser!.uid);
 
         UploadTask task = reference.putFile(imageFile);

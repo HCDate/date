@@ -70,7 +70,7 @@ class AuthenticationController extends GetxController {
 
     Reference reference = FirebaseStorage.instance
         .ref()
-        .child("profile Images")
+        .child("profileImages")
         .child(FirebaseAuth.instance.currentUser!.uid);
 
     UploadTask task = reference.putFile(imageFile);
