@@ -289,7 +289,107 @@ class _ChatListPageState extends State<ChatListPage> {
                                                       )),
                                             ),
                                           )
-                                        : SizedBox();
+                                        : Card(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15)),
+                                            elevation: 1,
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .04,
+                                                vertical: 4),
+                                            child: Slidable(
+                                              startActionPane: ActionPane(
+                                                  motion: const StretchMotion(),
+                                                  children: [
+                                                    SlidableAction(
+                                                      onPressed: (context) =>
+                                                          _onDismissed(chat.id),
+                                                      icon: Icons.delete,
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      label: 'Delete',
+                                                    )
+                                                  ]),
+                                              child: ListTile(
+                                                  leading: CircleAvatar(
+                                                    backgroundImage:
+                                                        NetworkImage(userImage),
+                                                  ),
+                                                  title: Text(userName),
+                                                  subtitle: const Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text("empty chat")
+                                                    ],
+                                                  ),
+                                                  trailing: Column(
+                                                    children: [
+                                                      Text(
+                                                          formatMessageTimestamp(
+                                                              lastMessage
+                                                                  .timestamp
+                                                                  .toDate())),
+                                                      chat.seen
+                                                          ? const Icon(
+                                                              Icons.done_all,
+                                                              color: Colors
+                                                                  .pink) // Seen icon
+                                                          : lastMessage
+                                                                      .senderId !=
+                                                                  currentUserId
+                                                              ? Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                  child:
+                                                                      Container(
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .pink,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                10),
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.pink)),
+                                                                    child:
+                                                                        const Text(
+                                                                      'new',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.white),
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : const Icon(
+                                                                  Icons.done,
+                                                                  color: Colors
+                                                                      .grey),
+                                                    ],
+                                                  ), // Unseen icon
+                                                  // Add more details or customize the ListTile as needed
+
+                                                  onTap: () => Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ChatPage(
+                                                            chat: chats[index],
+                                                            currentUserId:
+                                                                currentUserId,
+                                                            uid: otherMemberId,
+                                                          ),
+                                                        ),
+                                                      )),
+                                            ),
+                                          );
                                   }
                                 }
                               },

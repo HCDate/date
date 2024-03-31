@@ -27,7 +27,7 @@ class _SecondPageState extends State<SecondPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    authenticationController.genderController.clear();
+    authenticationController.genderController.text = "male";
     authenticationController.ageController.clear();
     authenticationController.religionController.clear();
     authenticationController.professionController.clear();
