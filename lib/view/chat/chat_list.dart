@@ -1,5 +1,7 @@
+import 'package:bilions_ui/bilions_ui.dart';
 import 'package:date/models/chat.dart';
 import 'package:date/models/message.dart';
+import 'package:date/view/chat/block_list.dart';
 import 'package:date/view/chat/chat_page.dart';
 import 'package:date/view/chat/new_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -56,6 +58,19 @@ class _ChatListPageState extends State<ChatListPage> {
           style: TextStyle(color: Colors.pink),
         ),
         automaticallyImplyLeading: false,
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+              PopupMenuItem(
+                onTap: () async {
+                  Get.to(BlockList());
+                },
+                value: 'Option 1',
+                child: const Text('Blocked List'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -343,31 +358,8 @@ class _ChatListPageState extends State<ChatListPage> {
                                                           : lastMessage
                                                                       .senderId !=
                                                                   currentUserId
-                                                              ? Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          8.0),
-                                                                  child:
-                                                                      Container(
-                                                                    decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .pink,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                10),
-                                                                        border: Border.all(
-                                                                            color:
-                                                                                Colors.pink)),
-                                                                    child:
-                                                                        const Text(
-                                                                      'new',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.white),
-                                                                    ),
-                                                                  ),
-                                                                )
+                                                              ? Icon(Icons
+                                                                  .new_releases)
                                                               : const Icon(
                                                                   Icons.done,
                                                                   color: Colors

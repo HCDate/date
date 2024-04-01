@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 String currentUserID = FirebaseAuth.instance.currentUser!.uid;
 String fcmServerToken =
-    "key=AAAAwe9tmkg:APA91bHkAQrgwpx7AY7eZU4u0_aY1txBu801o7EYDO3SiPd-A1k60L1sauLgQpMklj06_ABPdBGPrWjr5nx3spAQV1ixNwBAPEnF3lzBepF4srM4PPk5qaJMabE_ZB5uTt5RaxSloVeZ";
+    "key=AAAAmQs8YSM:APA91bEs344qRhwI_T056DlF6pUiOwhmjiwhsRWEXZP2e83YLI3BUkjxGWe-7k_FXokfMeUiUP2k1Z44UaoABDZ_mkeREjSCPu4NgOliVtU37ctcYyUaDpa52DgU8u3y73kDsQN3QpSg";
 String? chosenAge;
 String? chosenCountry;
 String? chosenGender;

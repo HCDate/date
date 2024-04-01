@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -23,6 +24,8 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:audioplayers/audioplayers.dart';
+
+import '../tab/user_detail.dart';
 
 class ChatPage extends StatefulWidget {
   final Chat chat;
@@ -328,15 +331,20 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         const SizedBox(
           width: 10,
         ),
-        ClipRRect(
-          borderRadius:
-              BorderRadius.circular(MediaQuery.of(context).size.height * .3),
-          child: CachedNetworkImage(
-            width: MediaQuery.of(context).size.height * .05,
-            height: MediaQuery.of(context).size.height * .05,
-            imageUrl: imageProfile,
-            errorWidget: (context, url, error) => const CircleAvatar(
-              child: Icon(CupertinoIcons.person),
+        GestureDetector(
+          onTap: () {
+            Get.to(() => UserDetailScreen(userID: widget.uid));
+          },
+          child: ClipRRect(
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.height * .3),
+            child: CachedNetworkImage(
+              width: MediaQuery.of(context).size.height * .05,
+              height: MediaQuery.of(context).size.height * .05,
+              imageUrl: imageProfile,
+              errorWidget: (context, url, error) => const CircleAvatar(
+                child: Icon(CupertinoIcons.person),
+              ),
             ),
           ),
         ),
@@ -616,20 +624,33 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
               width: 3,
             ),
             Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: InputDecoration(
-                  hintText: 'Enter message',
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.emoji_emotions),
-                    onPressed: () {
-                      setState(() {
-                        _showEmojiPicker =
-                            !_showEmojiPicker; // Toggle emoji picker visibility
-                      });
+              child: Stack(
+                children: [
+                  TextField(
+                    focusNode: focusNode,
+                    controller: _messageController,
+                    onTap: () {
+                      if (_showEmojiPicker) {
+                        setState(() {
+                          _showEmojiPicker =
+                              false; // Reset emoji icon click flag
+                        });
+                      }
                     },
+                    decoration: InputDecoration(
+                      hintText: 'Enter message',
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.emoji_emotions),
+                        onPressed: () {
+                          setState(() {
+                            _showEmojiPicker =
+                                !_showEmojiPicker; // Toggle emoji picker visibility
+                          });
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
             IconButton(

@@ -24,7 +24,7 @@ class ProfileController extends GetxController {
   }
 
   @override
-  void onInit() async {
+   void onInit() async {
     // TODO: implement onInit
     super.onInit();
     DocumentSnapshot currentUserDoc = await FirebaseFirestore.instance
@@ -43,31 +43,61 @@ class ProfileController extends GetxController {
     //   gender = dataSnapshot.data()!["gender"].toString();
     //   lookingFor = dataSnapshot.data()!["lookingFor"].toString();
     // });
+    if (chosenAge == null) {
+      usersProfileList.bindStream(
+        FirebaseFirestore.instance
+            .collection("users")
+            .where("lookingFor", isEqualTo: currentLookingFor.toString())
+            .orderBy("publishedDateTime", descending: true)
+            .snapshots()
+            .map((QuerySnapshot queryDataSnapshot) {
+          List<Person> profileList = [];
 
-    usersProfileList.bindStream(
-      FirebaseFirestore.instance
-          .collection("users")
-          .where("lookingFor", isEqualTo: currentLookingFor.toString())
-          .snapshots()
-          .map((QuerySnapshot queryDataSnapshot) {
-        List<Person> profileList = [];
+          for (var eachProfile in queryDataSnapshot.docs) {
+            if (eachProfile["uid"] != FirebaseAuth.instance.currentUser!.uid) {
+              var person = Person.fromDataSnapshot(eachProfile);
 
-        for (var eachProfile in queryDataSnapshot.docs) {
-          if (eachProfile["uid"] != FirebaseAuth.instance.currentUser!.uid) {
-            var person = Person.fromDataSnapshot(eachProfile);
-
-            // Apply additional filtering based on 'gender'
-            if (person.gender!.toLowerCase() != currentGender.toLowerCase()) {
-              profileList.add(person);
+              // Apply additional filtering based on 'gender'
+              if (person.gender!.toLowerCase() != currentGender.toLowerCase()) {
+                profileList.add(person);
+              }
             }
           }
-        }
 
-        return profileList;
-      }),
-    );
+          return profileList;
+        }),
+      );
+    } else {
+      usersProfileList.bindStream(
+        FirebaseFirestore.instance
+            .collection("users")
+            .where("lookingFor", isEqualTo: currentLookingFor.toString())
+            .where("age",
+                isGreaterThanOrEqualTo: int.parse(chosenAge.toString()))
+            .snapshots()
+            .map((QuerySnapshot queryDataSnapshot) {
+          List<Person> profileList = [];
+
+          for (var eachProfile in queryDataSnapshot.docs) {
+            if (eachProfile["uid"] != FirebaseAuth.instance.currentUser!.uid) {
+              var person = Person.fromDataSnapshot(eachProfile);
+
+              // Apply additional filtering based on 'gender'
+              if (person.gender!.toLowerCase() != currentGender.toLowerCase()) {
+                profileList.add(person);
+              }
+            }
+          }
+
+          return profileList;
+        }),
+      );
+    }
   }
 
+ 
+ 
+ 
   favoriteSentAndFavoriteReceived(
       String toUserID, String senderName, String receiverToken) async {
     var document = await FirebaseFirestore.instance
@@ -197,7 +227,7 @@ class ProfileController extends GetxController {
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           HttpHeaders.authorizationHeader:
-              "key=AAAAwe9tmkg:APA91bGI9ACjGc3NuMC4FHIDyP2SbNzdoBZsLCL3cy_Savr_8TJ51cxfJI3ROrwyqYgizOJT2KNlDmEbZJLUoWXS1LCFfTT4TYumembJkxNG6f8vpk1K9W-fd8PHJ7GgHVF8s6IcOewN"
+              "key=AAAAmQs8YSM:APA91bEs344qRhwI_T056DlF6pUiOwhmjiwhsRWEXZP2e83YLI3BUkjxGWe-7k_FXokfMeUiUP2k1Z44UaoABDZ_mkeREjSCPu4NgOliVtU37ctcYyUaDpa52DgU8u3y73kDsQN3QpSg"
         },
         body: jsonEncode(body),
       );
