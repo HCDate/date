@@ -3,14 +3,12 @@ import 'dart:io';
 import 'package:async_button/async_button.dart';
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date/global.dart';
 import 'package:date/view/home/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_number_field/flutter_phone_number_field.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:text_area/text_area.dart';
@@ -19,6 +17,7 @@ import '../../controller/auth_controller.dart';
 import '../../controller/message_controller.dart';
 import '../../services/interest.dart';
 import '../../widgets/custom_text_field.dart';
+import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 
 class AccountSettingScreen extends StatefulWidget {
   const AccountSettingScreen({super.key});
@@ -56,23 +55,18 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
   double val = 0;
   String name = "";
   String age = "";
-  String phoneNo = "";
-  String email = "";
-  String password = "";
-  String city = "";
-  String country = "";
   String bio = '';
-
+  String lookingFor = '';
   String profession = "";
 
-  String religion = "";
   String urlImage1 = "";
   String urlImage2 = "";
   String urlImage3 = "";
   String urlImage4 = "";
   String urlImage5 = "";
-  String? selectedGender;
-  AsyncBtnStatesController btnStateController = AsyncBtnStatesController();
+  final AsyncBtnStatesController btnStateController =
+      Get.put(AsyncBtnStatesController());
+
   chooseImage() async {
     XFile? pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -116,20 +110,10 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
         setState(() {
           name = snapshot.data()!["name"];
           authenticationController.nameController.text = name;
-          age = snapshot.data()!["age"].toString();
-          email = snapshot.data()!['email'].toString();
-          authenticationController.emailController.text = email;
-          authenticationController.ageController.text = age;
-          selectedGender = snapshot.data()!['gender'].toString();
-          phoneNo = snapshot.data()!["phoneNo"].toString();
-          authenticationController.phoneController.text = phoneNo;
-          city = snapshot.data()!["city"].toString();
-          authenticationController.cityController.text = city;
-          country = snapshot.data()!["country"].toString();
-          authenticationController.countryController.text = country;
 
-          religion = snapshot.data()!["religion"].toString();
-          authenticationController.religionController.text = religion;
+          lookingFor = snapshot.data()!["lookingFor"];
+          authenticationController.lookingForController.text = lookingFor;
+
           profession = snapshot.data()!["profession"];
           authenticationController.professionController.text = profession;
           bio = snapshot.data()!["bio"];
@@ -152,7 +136,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
   }
 
   updateUserDataWithOutImage(String name, String phoneNo, String profession,
-      String bio, List interests) async {
+      String bio, String lookingFor, List interests) async {
     await FirebaseFirestore.instance
         .collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -161,6 +145,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       'phoneNo': phoneNo,
       'profession': profession,
       'bio': bio,
+      'lookingFor': lookingFor,
       'interests': interests
     });
     toast(context, 'Confirmed', variant: Variant.success);
@@ -233,6 +218,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
               authenticationController.phoneController.text.trim(),
               authenticationController.professionController.text.trim(),
               authenticationController.bioController.text.trim(),
+              authenticationController.lookingForController.text,
               authenticationController.selectedInterests);
     } else {
       Get.snackbar(
@@ -250,6 +236,12 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
         reasonValidation = authenticationController.bioController.text.isEmpty;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    btnStateController.dispose(); // Dispose of the controller
+    super.dispose();
   }
 
   @override
@@ -318,41 +310,43 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                       height: 15,
                     ),
 
+                    const Text(
+                      'What you are looking for?',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
                     SizedBox(
-                      height: 70,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: FlutterPhoneNumberField(
-                        style: const TextStyle(color: Colors.black),
-                        focusNode: focusNode,
-                        initialCountryCode: "ET",
-                        pickerDialogStyle: PickerDialogStyle(
-                          countryFlagStyle: const TextStyle(
-                              fontSize: 17, color: Colors.white),
-                        ),
-                        decoration: const InputDecoration(
-                          hintText: 'Phone Number',
-                          hintStyle:
-                              TextStyle(color: Colors.black, fontSize: 14),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                          ),
-                        ),
-                        languageCode: "en",
-                        onChanged: (phone) {
-                          if (phone.completeNumber.length == 13) {
-                            setState(() {
-                              phoneNumber = phone.completeNumber;
-                              authenticationController.phoneController.text =
-                                  phoneNumber;
-                            });
-                          }
-                        },
-                        onCountryChanged: (country) {
-                          if (kDebugMode) {
-                            print('Country changed to: ${country.name}');
-                          }
-                        },
-                      ),
+                      height: 60,
+                      child: MultiSelectContainer(
+                          maxSelectableCount: 1,
+                          highlightColor: Colors.pink,
+                          showInListView: true,
+                          listViewSettings: ListViewSettings(
+                              scrollDirection: Axis.horizontal,
+                              separatorBuilder: (_, __) => const SizedBox(
+                                    width: 10,
+                                  )),
+                          items: [
+                            MultiSelectCard(
+                              value: 'marriage',
+                              label: 'Marriage',
+                            ),
+                            MultiSelectCard(
+                              value: 'relationShip',
+                              label: 'RelationShip',
+                            ),
+                            MultiSelectCard(
+                              value: 'friendShip',
+                              label: 'FriendShip',
+                            ),
+                          ],
+                          onChange: (allSelectedItems, selectedItem) {
+                            print(selectedItem);
+                            authenticationController.lookingForController.text =
+                                selectedItem;
+                          }),
                     ),
 
                     const SizedBox(
