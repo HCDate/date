@@ -214,7 +214,25 @@ class ProfileController extends GetxController {
       Get.snackbar("View successful", "View Added successfully");
     }
   }
+Future<bool> hasLiked(String userId) async {
+    DocumentSnapshot likedDoc = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('likeSent')
+        .doc(userId)
+        .get();
+    return likedDoc.exists;
+  }
 
+  Future<bool> hasFavorited(String userId) async {
+    DocumentSnapshot favoritedDocs = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('favoriteSent')
+        .doc(userId)
+        .get();
+    return favoritedDocs.exists;
+  }
   Future<void> sendPushNotification(token, senderName, title, content) async {
     try {
       final body = {
