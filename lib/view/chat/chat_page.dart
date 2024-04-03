@@ -108,7 +108,25 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       RecordMp3.instance.start(recordFilePath, (type) {
         setState(() {});
       });
-    } else {}
+    } else {
+      await Permission.microphone.request();
+      // After requesting permission, check again if permission is granted
+      bool granted = await Permission.microphone.isGranted;
+      if (granted) {
+        // If permission is granted now, start recording
+        recordFilePath = await getFilePath();
+        RecordMp3.instance.start(recordFilePath, (type) {
+          setState(() {});
+        });
+      } else {
+        // Handle the case where the user denied the permission request
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Microphone permission is required.'),
+          ),
+        );
+      }
+    }
     setState(() {});
   }
 
@@ -180,10 +198,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     retrieveUserInfo();
-
+    checkPermission();
     _chatController.updateSeenStatusOnChatEnter(widget.chat.id);
     WidgetsBinding.instance!.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
