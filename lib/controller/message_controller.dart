@@ -123,8 +123,9 @@ class ChatController {
             timestamp: Timestamp.now(),
             duration: '');
 
-        final name =
-            getUserNameFromMemberId(FirebaseAuth.instance.currentUser!.uid);
+        String name = await getUserNameFromMemberId(
+            FirebaseAuth.instance.currentUser!.uid);
+
         await addMessageToChat(chatId, newMessage);
         sendPushNotification(token, name, 'have image');
       } else {
@@ -168,8 +169,9 @@ class ChatController {
           duration: duration);
 
       // await addMessageToChat(chatId, newMessage);
-      final name =
-          getUserNameFromMemberId(FirebaseAuth.instance.currentUser!.uid);
+      String name =
+          await getUserNameFromMemberId(FirebaseAuth.instance.currentUser!.uid);
+
       await addMessageToChat(chatId, newMessage);
       sendPushNotification(token, name, 'have voice');
       print('Message added successfully with ID: $messageId');
@@ -322,14 +324,30 @@ class ChatController {
           senderId: FirebaseAuth.instance.currentUser!.uid,
           timestamp: Timestamp.now(),
           duration: '');
-      final name =
-          getUserNameFromMemberId(FirebaseAuth.instance.currentUser!.uid);
+      String name =
+          await getUserNameFromMemberId(FirebaseAuth.instance.currentUser!.uid);
+
       await addMessageToChat(chatId, newMessage);
-      sendPushNotification(token, name, content);
+      String notificationContent = await fetchNotificationContent(content);
+      sendPushNotification(token, name, notificationContent);
       print('Message added successfully with ID: $messageId');
     } catch (error) {
       print('Error adding message: $error');
       throw error; // Handle the error as per your requirement
+    }
+  }
+
+  Future<String> fetchNotificationContent(String content) async {
+    try {
+      // Your asynchronous logic to fetch the notification content
+      // For example, making a network request or accessing data
+      // Replace this with your actual implementation
+      await Future.delayed(Duration(seconds: 1)); // Simulate async operation
+      return content;
+    } catch (error) {
+      // Handle errors here, like logging or providing a default message
+      print("Error fetching notification content: $error");
+      return "Error: Notification unavailable"; // Example default message
     }
   }
 
