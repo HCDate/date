@@ -41,26 +41,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text('I am looking for a'),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DropdownButton<String>(
-                      items: ['Male', 'Female'].map((value) {
-                        return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            ));
-                      }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          chosenGender = value;
-                        });
-                      },
-                      hint: Text("select gender"),
-                      value: chosenGender,
-                    ),
-                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -134,128 +114,110 @@ class _SwipeScreenState extends State<SwipeScreen> {
     });
   }
 
-  List<Widget> _buildCards(List<Person> profileList) {
-    List<Widget> cards = [];
-    for (final person in profileList) {
-      cards.add(_buildCard(person));
-    }
-    return cards;
-  }
-
   Widget _buildCard(Person person) {
-    return FutureBuilder(
-        future: Future.wait([
-          profileController.hasLiked(person.uid.toString()),
-          profileController.hasFavorited(person.uid.toString()),
-        ]),
-        builder: (context, AsyncSnapshot<List<bool>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Show loading indicator while fetching data
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            bool liked = snapshot.data![0];
-            bool favorited = snapshot.data![1];
-            return Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(() => UserDetailScreen(userID: person.uid));
-                      },
-                      child: CachedNetworkImage(
-                        imageUrl: person.imageProfile.toString(),
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                      ),
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Get.to(() => UserDetailScreen(userID: person.uid));
+              },
+              child: Image.network(
+                person.imageProfile.toString(),
+                fit: BoxFit.cover,
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Get.to(
-                                  () => UserDetailScreen(userID: person.uid));
-                            },
-                            child: Text(person.name.toString(),
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold))),
-                        Text(person.age.toString(),
-                            style: TextStyle(fontSize: 16.0)),
-                        Text(
-                          person.bio.toString(),
-                          style: const TextStyle(fontSize: 14.0),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // Align buttons to the right
-                          children: [
-                            ElevatedButton(
-                                onPressed: () async {
-                                  // Call like method from ProfileController
-                                  await retriveReceiver(person.uid.toString());
-                                  profileController.likeSentAndFavoriteReceived(
-                                      person.uid.toString(),
-                                      senderName,
-                                      receiverToken);
-                                },
-                                child: Icon(
-                                  liked ? Icons.star : Icons.star_border,
-                                  color: liked ? Colors.yellow : Colors.pink,
-                                  size: 40,
-                                )),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                                onPressed: () async {
-                                  await retriveReceiver(person.uid.toString());
-                                  profileController
-                                      .favoriteSentAndFavoriteReceived(
-                                          person.uid.toString(),
-                                          senderName,
-                                          receiverToken);
-                                },
-                                child: Icon(
-                                  favorited
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: favorited ? Colors.red : Colors.pink,
-                                  size: 40,
-                                )),
-                            SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Call undo method from CardSwiperController
-                                _controller.undo();
-                              },
-                              child: const Icon(Icons.rotate_left),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  );
+                },
+                errorBuilder: (BuildContext context, Object error,
+                    StackTrace? stackTrace) {
+                  return Icon(Icons.error);
+                },
               ),
-            );
-          }
-        });
-  }
-
-  Widget _cardBuilder(
-      BuildContext context, int index, int realIndex, int swipeIndex) {
-    final profileList = profileController.allUsersProfileList;
-    final person = profileList[index];
-    return _buildCard(person);
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Get.to(() => UserDetailScreen(userID: person.uid));
+                  },
+                  child: Text(
+                    person.name.toString(),
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  person.age.toString(),
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                Text(
+                  person.bio.toString(),
+                  style: TextStyle(fontSize: 14.0),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => profileController
+                          .toggleLikedStatus(person.uid.toString()),
+                      child: Obx(() {
+                        final liked =
+                            profileController.isLiked(person.uid ?? '');
+                        return Icon(
+                          liked ? Icons.star : Icons.star_border,
+                          color: liked ? Colors.yellow : Colors.pink,
+                          size: 40,
+                        );
+                      }),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () => profileController
+                          .toggleFavoritedStatus(person.uid.toString()),
+                      child: Obx(() {
+                        final favorited =
+                            profileController.isFavorited(person.uid ?? '');
+                        return Icon(
+                          favorited ? Icons.favorite : Icons.favorite_border,
+                          color: favorited ? Colors.red : Colors.pink,
+                          size: 40,
+                        );
+                      }),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        _controller.undo();
+                      },
+                      child: Icon(Icons.rotate_left),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -314,7 +276,11 @@ class _SwipeScreenState extends State<SwipeScreen> {
                             isLoop: false,
                             controller: _controller,
                             cardsCount: profileList.length,
-                            cardBuilder: _cardBuilder,
+                            cardBuilder:
+                                (context, index, realIndex, swipeIndex) {
+                              final person = profileList[index];
+                              return _buildCard(person);
+                            },
                             numberOfCardsDisplayed: 1,
                             onSwipe: (int previousIndex, int? currentIndex,
                                 CardSwiperDirection direction) {

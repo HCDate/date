@@ -56,9 +56,11 @@ class FirebaseApi {
         // Show a dialog when a notification is received in the foreground
         Get.snackbar(
           message.notification?.title ?? "Notification",
-          message.notification?.body ?? "No body",
+
+          message.notification?.title ?? "No body",
           // Set the position to the top
           snackPosition: SnackPosition.TOP,
+          showProgressIndicator: true,
           // Set the duration
           duration: Duration(seconds: 5),
           // Callback when the snackbar is dismissed

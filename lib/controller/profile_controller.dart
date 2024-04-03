@@ -17,6 +17,9 @@ class ProfileController extends GetxController {
   final Rx<List<Person>> usersProfileList = Rx<List<Person>>([]);
   List<Person> get allUsersProfileList => usersProfileList.value;
   NotificationService notificationService = NotificationService();
+  final Rx<Set<String>> _likedUserIds = Rx<Set<String>>({});
+  final Rx<Set<String>> _favoritedUserIds = Rx<Set<String>>({});
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String gender = '';
   String lookingFor = '';
   getResults() async {
@@ -24,9 +27,11 @@ class ProfileController extends GetxController {
   }
 
   @override
-   void onInit() async {
+  void onInit() async {
     // TODO: implement onInit
     super.onInit();
+    fetchLikedUserIds();
+    fetchFavoritedUserIds();
     DocumentSnapshot currentUserDoc = await FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -95,9 +100,6 @@ class ProfileController extends GetxController {
     }
   }
 
- 
- 
- 
   favoriteSentAndFavoriteReceived(
       String toUserID, String senderName, String receiverToken) async {
     var document = await FirebaseFirestore.instance
@@ -214,7 +216,95 @@ class ProfileController extends GetxController {
       Get.snackbar("View successful", "View Added successfully");
     }
   }
-Future<bool> hasLiked(String userId) async {
+
+  Future<void> fetchLikedUserIds() async {
+    final likedDocs = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUserID)
+        .collection('likeSent')
+        .get();
+
+    final likedUserIds = likedDocs.docs.map((doc) => doc.id).toSet();
+    _likedUserIds.value = likedUserIds;
+  }
+
+  Future<void> fetchFavoritedUserIds() async {
+    final favoritedDocs = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUserID)
+        .collection('favoriteSent')
+        .get();
+
+    final favoritedUserIds = favoritedDocs.docs.map((doc) => doc.id).toSet();
+    _favoritedUserIds.value = favoritedUserIds;
+  }
+
+  Future<List<bool>> checkUserActions(String userId) async {
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final likeDoc = await _firestore
+        .collection("users")
+        .doc(currentUser.uid)
+        .collection('likeSent')
+        .doc(userId)
+        .get();
+    final favoriteDoc = await _firestore
+        .collection("users")
+        .doc(currentUser.uid)
+        .collection('favoriteSent')
+        .doc(userId)
+        .get();
+    return [likeDoc.exists, favoriteDoc.exists];
+  }
+
+  Future<void> toggleLikedStatus(String userId) async {
+    if (_likedUserIds.value.contains(userId)) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUserID)
+          .collection('likeSent')
+          .doc(userId)
+          .delete();
+      _likedUserIds.value.remove(userId);
+    } else {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUserID)
+          .collection('likeSent')
+          .doc(userId)
+          .set({});
+      _likedUserIds.value.add(userId);
+    }
+  }
+
+  Future<void> toggleFavoritedStatus(String userId) async {
+    if (_favoritedUserIds.value.contains(userId)) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUserID)
+          .collection('favoriteSent')
+          .doc(userId)
+          .delete();
+      _favoritedUserIds.value.remove(userId);
+    } else {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUserID)
+          .collection('favoriteSent')
+          .doc(userId)
+          .set({});
+      _favoritedUserIds.value.add(userId);
+    }
+  }
+
+  bool isLiked(String userId) {
+    return _likedUserIds.value.contains(userId);
+  }
+
+  bool isFavorited(String userId) {
+    return _favoritedUserIds.value.contains(userId);
+  }
+
+  Future<bool> hasLiked(String userId) async {
     DocumentSnapshot likedDoc = await FirebaseFirestore.instance
         .collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -233,6 +323,7 @@ Future<bool> hasLiked(String userId) async {
         .get();
     return favoritedDocs.exists;
   }
+
   Future<void> sendPushNotification(token, senderName, title, content) async {
     try {
       final body = {
