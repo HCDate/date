@@ -4,14 +4,10 @@ import 'package:bilions_ui/bilions_ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date/controller/profile_controller.dart';
 import 'package:date/global.dart';
-import 'package:date/view/home/home_screen.dart';
 import 'package:date/view/settings/account_setting.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_image_slider/carousel.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -91,7 +87,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
           profession = snapshot.data()!['profession'];
           lookingFor = snapshot.data()!['lookingFor'];
         });
-        print(bio);
       }
     });
   }
@@ -102,7 +97,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
   String favorites = '';
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     retrieveUserInfo();
     count();
@@ -183,6 +177,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
         .update({
       'imageProfile': imageProfile.toString(),
     });
+    // ignore: use_build_context_synchronously
     toast(context, 'Profile Changed', variant: Variant.success);
     setState(() {
       profilePicture = imageProfile;
@@ -197,7 +192,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
       Get.offAll(const LoginScreen());
     } catch (error) {
       // Handle logout error
-      print("Error during logout: $error"); // Log the error for debugging
       // You can also show a user-friendly error message using a snackbar or dialog
     }
   }
@@ -259,7 +253,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                               }
                             },
                             value: 'Option 1',
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Icon(
                                   Icons.edit,
@@ -277,7 +271,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                               }
                             },
                             value: 'Option 2',
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Icon(
                                   Icons.photo,
@@ -303,7 +297,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                                       Icons.logout,
                                       size: 20,
                                     )),
-                                Text("Log out")
+                                const Text("Log out")
                               ],
                             ),
                           ),
@@ -336,7 +330,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          name + ',' + age,
+                          '$name,$age',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20),
                         ),
@@ -361,7 +355,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                           Text(lookingFor!)
                         ],
                       )
-                    : SizedBox(),
+                    : const SizedBox(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -408,21 +402,19 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                   ],
                 ),
                 const SizedBox(height: 20),
-                Container(
-                  child: TabBar(
-                      labelColor: Colors.black,
-                      controller: tabController,
-                      isScrollable: true,
-                      indicatorColor: Colors.pink,
-                      tabs: const [
-                        Tab(
-                          text: "About",
-                        ),
-                        Tab(
-                          text: "Gallery",
-                        )
-                      ]),
-                ),
+                TabBar(
+                    labelColor: Colors.black,
+                    controller: tabController,
+                    isScrollable: true,
+                    indicatorColor: Colors.pink,
+                    tabs: const [
+                      Tab(
+                        text: "About",
+                      ),
+                      Tab(
+                        text: "Gallery",
+                      )
+                    ]),
                 SizedBox(
                   width: double.maxFinite,
                   height: 300,
@@ -440,7 +432,7 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
-                            Text(city + ',' + country)
+                            Text('$city,$country')
                           ],
                         ),
                         const SizedBox(

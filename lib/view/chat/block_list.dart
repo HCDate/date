@@ -60,9 +60,9 @@ class _BlockListState extends State<BlockList> {
         ),
       ),
       body: blockList == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : blockList.isEmpty
-              ? Center(
+              ? const Center(
                   child: Text('No users blocked'),
                 )
               : ListView.builder(
@@ -74,11 +74,11 @@ class _BlockListState extends State<BlockList> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return ListTile(
+                          return const ListTile(
                             title: Text('Loading...'),
                           );
                         } else if (!snapshot.hasData) {
-                          return ListTile(
+                          return const ListTile(
                             title: Text('User data not available'),
                           );
                         } else {
@@ -93,7 +93,7 @@ class _BlockListState extends State<BlockList> {
                             ),
                             title: Text(userName),
                             trailing: IconButton(
-                                icon: Icon(Icons.block),
+                                icon: const Icon(Icons.block),
                                 onPressed: () {
                                   confirm(
                                     context,

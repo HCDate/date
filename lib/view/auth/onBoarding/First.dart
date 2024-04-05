@@ -1,20 +1,16 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:date/controller/auth_controller.dart';
 import 'package:date/view/auth/onBoarding/Second.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:text_area/text_area.dart';
 import 'package:uic/widgets.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import '../../../widgets/custom_text_field.dart';
 
 class FirstPage extends StatefulWidget {
-  FirstPage();
+  const FirstPage({super.key});
 
   @override
   State<FirstPage> createState() => _FirstPageState();
@@ -27,7 +23,6 @@ class _FirstPageState extends State<FirstPage> {
       AuthenticationController.authenticationController;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     authenticationController.bioController.addListener(() {
       setState(() {
@@ -45,13 +40,13 @@ class _FirstPageState extends State<FirstPage> {
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 60,
               ),
               StepIndicator(
                 selectedStepIndex: 1,
                 totalSteps: 4,
-                completedStep: Icon(
+                completedStep: const Icon(
                   Icons.check_circle,
                   color: Colors.pink,
                 ),
@@ -64,7 +59,7 @@ class _FirstPageState extends State<FirstPage> {
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 100,
               ),
               authenticationController.imageFile == null
@@ -74,7 +69,7 @@ class _FirstPageState extends State<FirstPage> {
                       decoration: BoxDecoration(
                           color: Colors.grey,
                           borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
+                          image: const DecorationImage(
                               fit: BoxFit.fitHeight,
                               image: AssetImage(
                                   'assets/images/profile_avatar.jpg'))),
@@ -90,7 +85,7 @@ class _FirstPageState extends State<FirstPage> {
                               image: FileImage(File(
                                   authenticationController.imageFile!.path)))),
                     ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Row(
@@ -104,12 +99,12 @@ class _FirstPageState extends State<FirstPage> {
                           authenticationController.imageFile;
                         });
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.image_outlined,
                         color: Colors.pink,
                         size: 30,
                       )),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   IconButton(
@@ -119,7 +114,7 @@ class _FirstPageState extends State<FirstPage> {
                           authenticationController.imageFile;
                         });
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.camera_alt_outlined,
                         color: Colors.pink,
                         size: 30,
@@ -157,17 +152,17 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
                   width: MediaQuery.of(context).size.width - 150,
                   height: 50,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: Colors.pink,
                       borderRadius: BorderRadius.all(Radius.circular(12))),
                   child: TextButton(
-                    child: Text(
+                    child: const Text(
                       'Continue',
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
@@ -185,7 +180,7 @@ class _FirstPageState extends State<FirstPage> {
                           variant: Variant.warning,
                         );
                       } else {
-                        Get.to(() => SecondPage());
+                        Get.to(() => const SecondPage());
                       }
                     },
                   )),

@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record_mp3/record_mp3.dart';
@@ -45,6 +46,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   final TextEditingController _messageController = TextEditingController();
   final ChatController _chatController = ChatController();
+  // ignore: prefer_final_fields
   bool _showEmojiPicker = false, _isUploading = false;
   String imageProfile = '';
   String name = '';
@@ -53,27 +55,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
   bool isCurrentlyPlaying = false;
   AudioPlayer audioPlayer = AudioPlayer();
-  ScrollController _scrollController = new ScrollController();
+  ScrollController _scrollController = ScrollController();
   AudioController audioController = Get.put(AudioController());
   final FocusNode focusNode = FocusNode();
   String audioURL = "";
   final ProfileController _profileController = ProfileController();
   int _limit = 100;
-  int _limitIncrement = 20;
+  final int _limitIncrement = 20;
   List<QueryDocumentSnapshot> listMessage = [];
-  // void _initialize() async {
-  //   try {
-  //     await _audioRecorder.openAudioSession();
-  //   } catch (e) {
-  //     print('Error initializing recorder: $e');
-  //   }
-  // }
-
-  void _scrollToBottom() {
-    // if (_scrollController.hasClients) {
-    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    // }
-  }
 
   Future<bool> checkPermission() async {
     if (!await Permission.microphone.isGranted) {
@@ -120,8 +109,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         });
       } else {
         // Handle the case where the user denied the permission request
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Microphone permission is required.'),
           ),
         );
@@ -165,13 +155,13 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       // Check for 5MB size limit (adjust as needed)
       // Display a message indicating the file is too large
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Audio file exceeds 5MB limit.")),
+        const SnackBar(content: Text("Audio file exceeds 5MB limit.")),
       );
       return; // Exit the function if file size is too large
     }
 
     // Continue with upload process as usual
-    UploadTask uploadTask = _chatController.uploadAudio(recordFile,
+    _chatController.uploadAudio(recordFile,
         "audio/${DateTime.now().millisecondsSinceEpoch.toString()}");
     // ... existing upload and error handling code ...
   }
@@ -179,7 +169,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   late String recordFilePath;
 
   retrieveUserInfo() async {
-    print('user widget:$widget.uid');
     await FirebaseFirestore.instance
         .collection("users")
         .doc(widget.uid)
@@ -262,6 +251,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                     await _profileController
                                         .retrieveUserInfo(widget.uid);
                                     alert(
+                                      // ignore: use_build_context_synchronously
                                       context,
                                       'Block User',
                                       'It blocked succeeded',
@@ -325,7 +315,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                           height: MediaQuery.of(context).size.height * .35,
                           child: EmojiPicker(
                             textEditingController: _messageController,
-                            config: Config(),
+                            config: const Config(),
                           ),
                         )
                     ],
@@ -379,11 +369,11 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                   fontWeight: FontWeight.w500),
             ),
             status == true
-                ? Text(
+                ? const Text(
                     'Online',
                     style: TextStyle(color: Colors.blueAccent),
                   )
-                : Text(
+                : const Text(
                     'Offline',
                     style: TextStyle(color: Colors.black),
                   )
@@ -409,10 +399,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         final messages = snapshot.data!;
 
         // Debug: Print messages to see if data is coming from the stream
-        print('Received Messages: ${messages.length}');
-        for (var message in messages) {
-          print('Message Content: ${message.senderId}');
-        }
 
         return ListView.builder(
             shrinkWrap: true,
@@ -523,12 +509,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                           ]),
                     )),
               );
-            }
-            // ListTile(
-            //   title: Text(messages[index].content),
-            // ),
-
-            );
+            });
       },
     );
   }
@@ -578,7 +559,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                               await http.get(Uri.parse(imageProfile));
                           Uint8List bytes = response.bodyBytes;
 
-                          // await ImageGallerySaver.saveImage(bytes);
+                          await ImageGallerySaver.saveImage(bytes);
 
                           // Show a success message
                           Get.snackbar("Image Download",
@@ -778,11 +759,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
           const SizedBox(
             width: 10,
           ),
-          // Text(
-          //   duration,
-          //   style: TextStyle(
-          //       fontSize: 12, color: isCurrentUser ? Colors.white : mainColor),
-          // ),
         ],
       ),
     );
@@ -794,11 +770,10 @@ class OptionsItem extends StatelessWidget {
   final String name;
   final VoidCallback onTap;
   const OptionsItem(
-      {required this.icon, required this.name, required this.onTap});
+      {super.key, required this.icon, required this.name, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return InkWell(
       onTap: () => onTap(),
       child: Padding(

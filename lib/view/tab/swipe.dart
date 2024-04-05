@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:cached_network_image/cached_network_image.dart'; // Import cached_network_image package
 import 'package:get/get.dart';
 import '../../controller/profile_controller.dart';
 import '../../global.dart';
@@ -12,6 +11,7 @@ class SwipeScreen extends StatefulWidget {
   const SwipeScreen({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _SwipeScreenState createState() => _SwipeScreenState();
 }
 
@@ -37,7 +37,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
         .then((dataSnapshot) {
       setState(() {
         senderName = dataSnapshot.data()!["name"].toString();
-        print(senderName);
       });
     });
   }
@@ -81,7 +80,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
                 },
                 errorBuilder: (BuildContext context, Object error,
                     StackTrace? stackTrace) {
-                  return Icon(Icons.error);
+                  return const Icon(Icons.error);
                 },
               ),
             ),
@@ -97,7 +96,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
                   },
                   child: Text(
                     person.name.toString(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -105,11 +104,11 @@ class _SwipeScreenState extends State<SwipeScreen> {
                 ),
                 Text(
                   person.age.toString(),
-                  style: TextStyle(fontSize: 16.0),
+                  style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
                   person.bio.toString(),
-                  style: TextStyle(fontSize: 14.0),
+                  style: const TextStyle(fontSize: 14.0),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -143,12 +142,12 @@ class _SwipeScreenState extends State<SwipeScreen> {
                         );
                       }),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
                         _controller.undo();
                       },
-                      child: Icon(Icons.rotate_left),
+                      child: const Icon(Icons.rotate_left),
                     ),
                   ],
                 ),
@@ -167,11 +166,11 @@ class _SwipeScreenState extends State<SwipeScreen> {
         child: Obx(() {
           final profileList = profileController.allUsersProfileList;
           return profileList.isEmpty
-              ? Center(
+              ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'You have no get Maches for now!',
                         style: TextStyle(fontSize: 20),
                       ),
@@ -183,10 +182,10 @@ class _SwipeScreenState extends State<SwipeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.only(left: 24, top: 8),
                               child: Text(
                                 "Habesha\nChristian\nMingle",

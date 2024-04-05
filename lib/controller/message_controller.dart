@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date/controller/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -18,7 +17,6 @@ import '../models/person.dart';
 
 class ChatController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final ProfileController _profileController = ProfileController();
   FirebaseStorage _storage = FirebaseStorage.instance;
   late Rx<File?> pickedFile;
   late Rx<User?> firebaseCurrentUser;
@@ -57,9 +55,8 @@ class ChatController {
         }).toList();
       });
     } catch (error) {
-      print('Error fetching chats: $error');
       // You might want to handle the error differently based on your needs
-      throw error;
+      rethrow;
     }
   }
 
@@ -79,7 +76,6 @@ class ChatController {
         // Monitor upload progress
         task.snapshotEvents.listen((TaskSnapshot snapshot) {
           double progress = snapshot.bytesTransferred / snapshot.totalBytes;
-          print("Upload progress: ${(progress * 100).toStringAsFixed(2)}%");
         });
 
         TaskSnapshot snapshot = await task;
@@ -87,7 +83,6 @@ class ChatController {
         return downloadUrlOfImage;
       }
     } catch (e) {
-      print("Upload error: $e");
       // Handle upload errors appropriately, e.g., display user-friendly messages
       return '';
     }
@@ -113,7 +108,6 @@ class ChatController {
         });
 
         // Get the automatically generated message ID
-        String messageId = newMessageRef.id;
         Message newMessage = Message(
             id: newMessageRef.id,
             content: urlOfDownloadedImage,
@@ -133,7 +127,6 @@ class ChatController {
             "Profile Image", "Your image exceed 4mb.please choice low.");
       }
     } catch (error) {
-      print('Error adding message: $error');
       throw error; // Handle the error as per your requirement
     }
   }
@@ -174,9 +167,7 @@ class ChatController {
 
       await addMessageToChat(chatId, newMessage);
       sendPushNotification(token, name, 'have voice');
-      print('Message added successfully with ID: $messageId');
     } catch (error) {
-      print('Error adding message: $error');
       throw error; // Handle the error as per your requirement
     }
   }
@@ -234,7 +225,6 @@ class ChatController {
 
       return updatedMessage;
     } catch (e) {
-      print('Error getting and updating message: $e');
       rethrow;
     }
   }
@@ -292,9 +282,7 @@ class ChatController {
       // Commit the batch to Firestore
       await batch.commit();
       // await _firestore.collection('chats').doc(chatId).update({'seen': true});
-    } catch (e) {
-      print('Error updating seen status on chat enter: $e');
-    }
+    } catch (e) {}
   }
 
   Future<void> sendMessage(
@@ -330,9 +318,7 @@ class ChatController {
       await addMessageToChat(chatId, newMessage);
       String notificationContent = await fetchNotificationContent(content);
       sendPushNotification(token, name, notificationContent);
-      print('Message added successfully with ID: $messageId');
     } catch (error) {
-      print('Error adding message: $error');
       throw error; // Handle the error as per your requirement
     }
   }
@@ -342,11 +328,11 @@ class ChatController {
       // Your asynchronous logic to fetch the notification content
       // For example, making a network request or accessing data
       // Replace this with your actual implementation
-      await Future.delayed(Duration(seconds: 1)); // Simulate async operation
+      await Future.delayed(
+          const Duration(seconds: 1)); // Simulate async operation
       return content;
     } catch (error) {
       // Handle errors here, like logging or providing a default message
-      print("Error fetching notification content: $error");
       return "Error: Notification unavailable"; // Example default message
     }
   }
@@ -368,8 +354,7 @@ class ChatController {
         return 'Unknown User'; // Placeholder if user data doesn't exist
       }
     } catch (error) {
-      print('Error retrieving user information: $error');
-      throw error;
+      rethrow;
     }
   }
 
@@ -405,11 +390,8 @@ class ChatController {
         'messages': [newMessage.toJson()],
         'seen': false
       });
-
-      print('Message added to chat successfully');
     } catch (error) {
-      print('Error adding message to chat: $error');
-      throw error; // Handle the error as per your requirement
+      rethrow; // Handle the error as per your requirement
     }
   }
 
@@ -436,8 +418,7 @@ class ChatController {
           .toList();
       return usersList;
     } catch (error) {
-      print('Error fetching users: $error');
-      throw error;
+      rethrow;
     }
   }
 
@@ -456,7 +437,6 @@ class ChatController {
           .collection('users')
           .where("lookingFor", isEqualTo: currentLookingFor.toString())
           .get();
-      print(usersSnapshot);
       List<Map<String, dynamic>?> usersList = [];
 
       for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
@@ -482,8 +462,7 @@ class ChatController {
 
       return usersList;
     } catch (error) {
-      print('Error fetching users: $error');
-      throw error;
+      rethrow;
     }
   }
 
@@ -510,9 +489,7 @@ class ChatController {
       // No chat found between current user and other user
       return true;
     } catch (error) {
-      print(
-          'Error checking if current user has a chat with other user: $error');
-      throw error;
+      rethrow;
     }
   }
 
@@ -537,22 +514,16 @@ class ChatController {
       if (imageUrl != null) {
         await deleteImageFromStorage(imageUrl);
       }
-
-      print('Message and associated image deleted successfully');
     } catch (error) {
-      print('Error deleting message and image: $error');
-      throw error; // Handle the error as per your requirement
+      rethrow; // Handle the error as per your requirement
     }
   }
 
   Future<void> deleteImageFromStorage(String imageUrl) async {
     try {
       await FirebaseStorage.instance.refFromURL(imageUrl).delete();
-
-      print('Image deleted from storage successfully');
     } catch (error) {
-      print('Error deleting image from storage: $error');
-      throw error; // Handle the error as per your requirement
+      rethrow; // Handle the error as per your requirement
     }
   }
 
@@ -573,8 +544,7 @@ class ChatController {
 
       return file;
     } catch (e) {
-      print('Error downloading image: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -589,10 +559,8 @@ class ChatController {
         'seen': newChat
             .seen // Assuming you have a method toJson() in your Message model
       });
-      print('Chat created successfully');
     } catch (error) {
-      print('Error creating chat: $error');
-      throw error; // Handle the error as per your requirement
+      rethrow; // Handle the error as per your requirement
     }
   }
 
@@ -604,10 +572,8 @@ class ChatController {
       await _firestore.collection('chats').doc(chatId).update({
         'seen': true,
       });
-      print('Seen status updated successfully');
     } catch (error) {
-      print('Error updating seen status: $error');
-      throw error; // Handle the error as per your requirement
+      rethrow; // Handle the error as per your requirement
     }
   }
 
@@ -639,10 +605,8 @@ class ChatController {
     try {
       // Delete the chat document from the Firestore 'chats' collection
       await _firestore.collection('chats').doc(chatId).delete();
-      print('Chat deleted successfully');
     } catch (error) {
-      print('Error deleting chat: $error');
-      throw error; // Handle the error as per your requirement
+      rethrow; // Handle the error as per your requirement
     }
   }
 }

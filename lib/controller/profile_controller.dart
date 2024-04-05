@@ -4,11 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/getwidget.dart';
-import "package:http/http.dart" as http;
 import 'package:http/http.dart';
 import '../models/person.dart';
 import '../services/notification_service.dart';
@@ -28,7 +24,6 @@ class ProfileController extends GetxController {
 
   @override
   void onInit() async {
-    // TODO: implement onInit
     super.onInit();
     fetchLikedUserIds();
     fetchFavoritedUserIds();
@@ -39,15 +34,6 @@ class ProfileController extends GetxController {
     String currentGender = currentUserDoc['gender'];
     String currentLookingFor = currentUserDoc['lookingFor'];
 
-    // await FirebaseFirestore.instance
-    //     .collection("users")
-    //     .doc(currentUserID)
-    //     .get()
-    //     .then((dataSnapshot) {
-
-    //   gender = dataSnapshot.data()!["gender"].toString();
-    //   lookingFor = dataSnapshot.data()!["lookingFor"].toString();
-    // });
     if (chosenAge == null) {
       usersProfileList.bindStream(
         FirebaseFirestore.instance
@@ -187,6 +173,7 @@ class ProfileController extends GetxController {
     }
   }
 
+  // ignore: non_constant_identifier_names
   ViewSentAndViewReceived(
       String toUserID, String senderName, String receiverToken) async {
     var document = await FirebaseFirestore.instance
@@ -197,7 +184,6 @@ class ProfileController extends GetxController {
         .get();
 
     if (document.exists) {
-      print('already in view list');
     } else {
       await FirebaseFirestore.instance
           .collection("users")
@@ -340,7 +326,6 @@ class ProfileController extends GetxController {
         },
         body: jsonEncode(body),
       );
-      print('response $response');
     } catch (e) {
       // Handle errors here
     }

@@ -1,23 +1,19 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:async_button/async_button.dart';
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:date/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:get/get.dart';
 import 'package:uic/checkbox_uic.dart';
 import 'package:uic/step_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'package:uic/widgets/action_button.dart';
 
 import '../../../global.dart';
-import 'Third.dart';
 
 class FourthPage extends StatefulWidget {
-  FourthPage();
+  const FourthPage({super.key});
 
   @override
   State<FourthPage> createState() => _FourthPageState();
@@ -31,7 +27,6 @@ class _FourthPageState extends State<FourthPage> {
       AuthenticationController.authenticationController;
   void makePayment() async {
     try {
-      print("make payment");
       paymentIntent = await createPaymentIntent();
       setState(() {
         paymentStatus = true;
@@ -60,7 +55,7 @@ class _FourthPageState extends State<FourthPage> {
     try {
       await Stripe.instance.presentPaymentSheet();
     } catch (e) {
-      print(e.toString());
+      return;
     }
   }
 
@@ -123,7 +118,6 @@ class _FourthPageState extends State<FourthPage> {
 
   @override
   Widget build(BuildContext context) {
-    AsyncBtnStatesController btnStateController = AsyncBtnStatesController();
     return Scaffold(
         body: SingleChildScrollView(
       child: Padding(
@@ -227,16 +221,12 @@ class _FourthPageState extends State<FourthPage> {
                         ],
                         note: "Contact us for any questions on your order.",
                         onSuccess: (Map params) async {
-                          print("onSuccess: $params");
                           setState(() {
                             paymentStatus = true;
                           });
                         },
-                        onError: (error) {
-                          print("onError: $error");
-                        },
+                        onError: (error) {},
                         onCancel: (params) {
-                          print('cancelled: $params');
                           setState(() {
                             paymentStatus = true;
                           });
@@ -281,80 +271,16 @@ class _FourthPageState extends State<FourthPage> {
                 child: Container(
               width: MediaQuery.of(context).size.width - 150,
               height: 50,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.pink,
                   borderRadius: BorderRadius.all(Radius.circular(12))),
               child: ActionButton(
                 action: () async {
                   await submit();
                 },
-                child: Text("Submit"),
+                child: const Text("Submit"),
               ),
-            )
-                //  Container(
-                //     width: MediaQuery.of(context).size.width - 150,
-                //     height: 50,
-                //     decoration: const BoxDecoration(
-                //         color: Colors.pink,
-                //         borderRadius: BorderRadius.all(Radius.circular(12))),
-                //     child: TextButton(
-                //       child: const Text(
-                //         'Submit',
-                //         style: TextStyle(color: Colors.white, fontSize: 20),
-                //       ),
-                //       onPressed: () {
-                //         if (term == true && paymentStatus == true) {
-                //           if (authenticationController.selectedInterests != null &&
-                //               authenticationController.bioController.text
-                //                   .trim()
-                //                   .isNotEmpty) {
-                //             authenticationController.createNewUser(
-                //                 authenticationController.profileImage==null??avatar:authenticationController.profileImage,
-                //                 authenticationController.ageController.text.trim(),
-                //                 authenticationController.nameController.text
-                //                     .trim()
-                //                     .toUpperCase(),
-                //                 authenticationController.emailController.text
-                //                     .trim(),
-                //                 authenticationController.passwordController.text
-                //                     .trim(),
-                //                 authenticationController.genderController.text
-                //                     .toLowerCase(),
-                //                 authenticationController.phoneController.text
-                //                     .trim(),
-                //                 authenticationController.cityController.text
-                //                     .trim()
-                //                     .toUpperCase(),
-                //                 authenticationController.countryController.text
-                //                     .trim()
-                //                     .toUpperCase(),
-                //                 authenticationController.stateController.text
-                //                     .trim()
-                //                     .toUpperCase(),
-                //                 authenticationController.professionController.text
-                //                     .trim(),
-                //                 authenticationController.religionController.text
-                //                     .trim(),
-                //                 authenticationController.selectedInterests,
-                //                 authenticationController.lookingForController.text
-                //                     .trim()
-                //                     .toUpperCase(),
-                //                 authenticationController.bioController.text.trim(),
-                //                 paymentStatus);
-                //           } else {
-                //             // Get.to(ThirdPage());
-                //           }
-                //         } else {
-                //           alert(
-                //             context,
-                //             'Term And Privacy',
-                //             'To register you need to accept term and privacy',
-                //             variant: Variant.danger,
-                //           );
-                //         }
-                //       },
-                //     )),
-                ),
+            )),
           ],
         ),
       ),

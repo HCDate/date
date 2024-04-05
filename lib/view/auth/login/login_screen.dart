@@ -19,8 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordTextEditingController = TextEditingController();
   FocusNode focusNode = FocusNode();
   String phoneNumber = "";
-  TextEditingController _otpController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
   bool showProgressBar = false;
   var controllerAuth = Get.put(AuthenticationController());
   var authenticationController =
@@ -33,11 +31,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser != null) {
       try {
-        final GoogleSignInAuthentication? googleAuth =
-            await googleUser?.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
         );
         final User userDetails =
             (await FirebaseAuth.instance.signInWithCredential(credential))
@@ -49,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await googleSignIn.signOut();
           await FirebaseAuth.instance.signOut();
           alert(
+            // ignore: use_build_context_synchronously
             context,
             'User Not found',
             'User is not registered',
@@ -60,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Get.to(FirstPage());
       } on FirebaseAuthException catch (e) {
         alert(
+          // ignore: use_build_context_synchronously
           context,
           'Login Error',
           e.toString(),
@@ -68,6 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       alert(
+        // ignore: use_build_context_synchronously
         context,
         'User Not found',
         'user not found',
@@ -112,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
               _buildButtonSection(
                 context: context,
                 label: "Sign In  Phone Number",
-                onPressed: () => Get.to(PhoneLogin()),
+                onPressed: () => Get.to(const PhoneLogin()),
                 color: Colors.pink,
                 textColor: Colors.white,
                 Icon: const Icon(
@@ -120,10 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 100,
               ),
             ],

@@ -1,6 +1,5 @@
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:date/view/auth/onBoarding/First.dart';
-import 'package:date/view/auth/onBoarding/Fourth.dart';
 import 'package:date/view/auth/onBoarding/PhoneVerification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,11 +25,11 @@ class _SignUpState extends State<SignUp> {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser != null) {
       try {
-        final GoogleSignInAuthentication? googleAuth =
-            await googleUser?.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
         );
         final User userDetails =
             (await FirebaseAuth.instance.signInWithCredential(credential))
@@ -46,13 +45,14 @@ class _SignUpState extends State<SignUp> {
           authenticationController.emailController.text =
               userDetails.email ?? '';
           // authenticationController.profileImage.toString()=userDetails.photoURL;
-          Get.to(FirstPage());
+          Get.to(const FirstPage());
         }
-
-        print(userDetails.uid);
-      } on FirebaseAuthException catch (e) {}
+      } on FirebaseAuthException {
+        return;
+      }
     } else {
       alert(
+        // ignore: use_build_context_synchronously
         context,
         'Title here',
         'Description here',
@@ -106,7 +106,7 @@ class _SignUpState extends State<SignUp> {
                   _buildButtonSection(
                     context: context,
                     label: "Sign Up with Phone Number",
-                    onPressed: () => Get.to(PhoneVerification()),
+                    onPressed: () => Get.to(const PhoneVerification()),
                     color: Colors.pink,
                     textColor: Colors.white,
                     Icon: const Icon(
@@ -114,10 +114,10 @@ class _SignUpState extends State<SignUp> {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 50,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 100,
                   ),
                 ],

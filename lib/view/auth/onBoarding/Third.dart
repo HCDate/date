@@ -4,14 +4,10 @@ import 'package:date/view/auth/onBoarding/Fourth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:get/get.dart';
-import 'package:text_area/text_area.dart';
 import 'package:uic/step_indicator.dart';
 
 import '../../../controller/auth_controller.dart';
-import '../../../services/interest.dart';
 import 'package:uic/widgets/action_button.dart';
-
-import '../../../widgets/custom_text_field.dart';
 
 class ThirdPage extends StatefulWidget {
   const ThirdPage({super.key});
@@ -25,7 +21,6 @@ class _ThirdPageState extends State<ThirdPage> {
       AuthenticationController.authenticationController;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -34,7 +29,6 @@ class _ThirdPageState extends State<ThirdPage> {
     String countryValue;
     String stateValue;
     String cityValue;
-    bool? term;
 
     return Scaffold(
       body: Padding(
@@ -42,7 +36,7 @@ class _ThirdPageState extends State<ThirdPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 60,
               ),
               StepIndicator(
@@ -183,7 +177,7 @@ class _ThirdPageState extends State<ThirdPage> {
                       borderRadius: BorderRadius.all(Radius.circular(12))),
                   child: ActionButton(
                     action: () async {
-                      Future.delayed(Duration(seconds: 5));
+                      Future.delayed(const Duration(seconds: 5));
                       if (authenticationController.selectedInterests != null &&
                           authenticationController.bioController.text
                               .trim()
@@ -191,7 +185,7 @@ class _ThirdPageState extends State<ThirdPage> {
                           authenticationController.lookingForController.text
                               .trim()
                               .isNotEmpty) {
-                        Get.to(FourthPage());
+                        Get.to(const FourthPage());
                       } else {
                         alert(
                           context,

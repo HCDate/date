@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date/global.dart';
 import 'package:date/view/SplashScreen.dart';
 import 'package:date/view/auth/AuthScreen.dart';
 import 'package:date/view/auth/onBoarding/First.dart';
@@ -11,8 +10,8 @@ import 'package:get/get.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
+// ignore: library_prefixes
 import '../models/person.dart' as personModel;
-import '../view/auth/onBoarding/Fourth.dart';
 import '../view/home/home_screen.dart';
 
 class AuthenticationController extends GetxController {
@@ -36,7 +35,6 @@ class AuthenticationController extends GetxController {
   TextEditingController lookingForController = TextEditingController();
   TextEditingController imageProfileController = TextEditingController();
 
-  final List<String> _selectedInterests = [];
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   List<String> selectedInterests = [];
   static String verifyId = "";
@@ -151,7 +149,7 @@ class AuthenticationController extends GetxController {
       Get.to(const HomeScreen());
     } catch (error) {
       Get.snackbar("Login Unsuccessful",
-          "Error occurred during signin authentication:${error}");
+          "Error occurred during signin authentication:$error");
     }
   }
 
@@ -177,7 +175,7 @@ class AuthenticationController extends GetxController {
     await _firebaseAuth
         .verifyPhoneNumber(
             phoneNumber: phone,
-            timeout: Duration(seconds: 30),
+            timeout: const Duration(seconds: 30),
             verificationCompleted: (PhoneAuthCredential) async {
               return;
             },
@@ -202,7 +200,7 @@ class AuthenticationController extends GetxController {
     try {
       final user = await _firebaseAuth.signInWithCredential(cred);
       if (user.user != null) {
-        Get.to(FirstPage());
+        Get.to(const FirstPage());
       } else {
         return "Error in otp login";
       }
@@ -248,7 +246,6 @@ class AuthenticationController extends GetxController {
       return userSnapshot.exists;
     } catch (e) {
       // Handle errors, such as Firestore exceptions
-      print('Error checking user registration: $e');
       return false;
     }
   }

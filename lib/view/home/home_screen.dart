@@ -20,11 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // PushNotificationSystems notificationSystems = PushNotificationSystems();
-    // notificationSystems.generateDeviceRegistrationToken();
-    // notificationSystems.whenNotificationReceived(context);
+
     getToken();
   }
 
@@ -49,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int screenIndex = 0;
   List tabList = [
     const SwipeScreen(),
-    ChatListPage(),
+    const ChatListPage(),
     const FavoriteScreen(),
     const LikeScreen(),
     UserDetailScreen(

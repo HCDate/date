@@ -1,6 +1,5 @@
 import 'package:date/view/auth/onBoarding/SignUp.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import 'login/login_screen.dart';
@@ -24,7 +23,7 @@ class AuthScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Spacer(),
+                const Spacer(),
                 _buildTextSection(),
                 const SizedBox(height: 50),
                 _buildButtonSection(

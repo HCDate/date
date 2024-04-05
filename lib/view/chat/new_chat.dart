@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:uuid/uuid.dart';
 import 'package:date/models/chat.dart'; // Import your Chat model or relevant model
@@ -60,11 +59,11 @@ class NewChatPage extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             // Display a user-friendly message when the chat list is empty
 
-            return Center(
+            return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'You have no chats Maches',
                     style: TextStyle(fontSize: 20),
                   ),
@@ -106,7 +105,7 @@ class NewChatPage extends StatelessWidget {
 
                     // Generate a unique chat ID using the member IDs and UUID
                     String newChatId =
-                        '${FirebaseAuth.instance.currentUser!.uid}_$selectedUserId${Uuid().v4()}';
+                        '${FirebaseAuth.instance.currentUser!.uid}_$selectedUserId${const Uuid().v4()}';
 
                     // Create a new chat using the provided details
                     Chat newChat = Chat(
@@ -123,6 +122,7 @@ class NewChatPage extends StatelessWidget {
 
                     // Navigate to the ChatPage with the newly created Chat object
                     Navigator.pushReplacement(
+                      // ignore: use_build_context_synchronously
                       context,
                       MaterialPageRoute(
                         builder: (context) => ChatPage(

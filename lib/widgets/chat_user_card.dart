@@ -17,7 +17,7 @@ class _ChatUserCard extends State<ChatUserCard> {
         elevation: 1,
         margin: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * .04, vertical: 4),
-        child: ListTile(
+        child: const ListTile(
           leading: CircleAvatar(
             child: Icon(CupertinoIcons.person),
           ),

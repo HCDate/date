@@ -1,4 +1,3 @@
-import 'package:bilions_ui/bilions_ui.dart';
 import 'package:date/models/chat.dart';
 import 'package:date/models/message.dart';
 import 'package:date/view/chat/block_list.dart';
@@ -14,7 +13,7 @@ import 'package:intl/intl.dart';
 import '../../controller/message_controller.dart';
 
 class ChatListPage extends StatefulWidget {
-  ChatListPage({super.key});
+  const ChatListPage({super.key});
 
   @override
   State<ChatListPage> createState() => _ChatListPageState();
@@ -43,7 +42,6 @@ class _ChatListPageState extends State<ChatListPage> {
       if (snapshot.exists) {
         setState(() {
           blocklist = List<String>.from(snapshot.get('blockList') ?? []);
-          print(blocklist);
         });
       }
     });
@@ -63,7 +61,7 @@ class _ChatListPageState extends State<ChatListPage> {
             itemBuilder: (BuildContext context) => <PopupMenuEntry>[
               PopupMenuItem(
                 onTap: () async {
-                  Get.to(BlockList());
+                  Get.to(const BlockList());
                 },
                 value: 'Option 1',
                 child: const Text('Blocked List'),
@@ -168,7 +166,7 @@ class _ChatListPageState extends State<ChatListPage> {
                                   String userImage = userData['imageProfile'];
                                   if (blocklist.contains(otherMemberId)) {
                                     // If the other member is in the blocklist, return an empty SizedBox
-                                    return SizedBox();
+                                    return const SizedBox();
                                   } else {
                                     bool hasContent =
                                         lastMessage.content.isNotEmpty;
@@ -358,7 +356,7 @@ class _ChatListPageState extends State<ChatListPage> {
                                                           : lastMessage
                                                                       .senderId !=
                                                                   currentUserId
-                                                              ? Icon(Icons
+                                                              ? const Icon(Icons
                                                                   .new_releases)
                                                               : const Icon(
                                                                   Icons.done,

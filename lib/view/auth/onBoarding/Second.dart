@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:date/controller/auth_controller.dart';
 import 'package:date/view/auth/onBoarding/Third.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
@@ -14,7 +11,7 @@ import 'package:uic/widgets/action_button.dart';
 import '../../../widgets/custom_text_field.dart';
 
 class SecondPage extends StatefulWidget {
-  SecondPage();
+  const SecondPage({super.key});
 
   @override
   State<SecondPage> createState() => _SecondPageState();
@@ -25,7 +22,6 @@ class _SecondPageState extends State<SecondPage> {
       AuthenticationController.authenticationController;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     authenticationController.genderController.text = "male";
     authenticationController.ageController.clear();
@@ -60,12 +56,8 @@ class _SecondPageState extends State<SecondPage> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
-    String selectedGender = 'Select Gender';
-
-    ValueNotifier<String> genderNotifier =
-        ValueNotifier<String>('Select Gender');
-
     return Scaffold(
         body: SingleChildScrollView(
       child: Padding(
@@ -155,7 +147,7 @@ class _SecondPageState extends State<SecondPage> {
                     borderRadius: BorderRadius.all(Radius.circular(12))),
                 child: ActionButton(
                   action: () async {
-                    Future.delayed(Duration(seconds: 10));
+                    Future.delayed(const Duration(seconds: 10));
                     calculateAge();
                     if (authenticationController.genderController.text
                             .trim()
@@ -226,7 +218,7 @@ class _SecondPageState extends State<SecondPage> {
         //Alignment between icons
         equallyAligned: true,
 
-        animationDuration: Duration(milliseconds: 300),
+        animationDuration: const Duration(milliseconds: 300),
         isCircular: true,
         // default : true,
         opacityOfGradient: 0.4,

@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date/view/home/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,7 +13,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:text_area/text_area.dart';
 
 import '../../controller/auth_controller.dart';
-import '../../controller/message_controller.dart';
 import '../../services/interest.dart';
 import '../../widgets/custom_text_field.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
@@ -46,7 +44,6 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
   var authenticationController =
       AuthenticationController.authenticationController;
   bool uploading = false, next = true;
-  final ChatController _chatController = ChatController();
   final List<File> _image = [];
   List<String> urlsList = [];
   List interests = [];
@@ -84,8 +81,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       if (img.lengthSync() > 4 * 1024 * 1024) {
         // Check for 4MB size limit
         // Display a message indicating the file is too large
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Image size exceeds 4MB limit.")),
+          const SnackBar(content: Text("Image size exceeds 4MB limit.")),
         );
         continue; // Skip to the next image
       }
@@ -148,8 +146,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       'lookingFor': lookingFor,
       'interests': interests
     });
+    // ignore: use_build_context_synchronously
     toast(context, 'Confirmed', variant: Variant.success);
-    Get.to(HomeScreen());
+    Get.to(const HomeScreen());
   }
 
   updateUserData(String name, String phoneNo, String profession, String bio,
@@ -195,8 +194,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
     });
 
     // Get.snackbar("Updated", "your account has been updated");
+    // ignore: use_build_context_synchronously
     toast(context, 'Confirmed', variant: Variant.success);
-    Get.to(HomeScreen());
+    Get.to(const HomeScreen());
     setState(() {
       uploading = false;
       _image.clear();
@@ -228,7 +228,6 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     retrieveUserData();
     authenticationController.bioController.addListener(() {
@@ -246,8 +245,6 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<bool> selectedList =
-        List.generate(availableInterests.length, (index) => false);
     return Scaffold(
       appBar: AppBar(
           leading: IconButton(
@@ -309,7 +306,6 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                     const SizedBox(
                       height: 15,
                     ),
-
                     const Text(
                       'What you are looking for?',
                       style: TextStyle(
@@ -343,12 +339,10 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                             ),
                           ],
                           onChange: (allSelectedItems, selectedItem) {
-                            print(selectedItem);
                             authenticationController.lookingForController.text =
                                 selectedItem;
                           }),
                     ),
-
                     const SizedBox(
                       height: 15,
                     ),
@@ -363,7 +357,6 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                         iconData: Icons.business_center,
                       ),
                     ),
-
                     const SizedBox(
                       height: 15,
                     ),
@@ -382,7 +375,6 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(
                       height: 15,
                     ),
@@ -468,15 +460,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                       },
                       child: const Text('Update'),
                     ),
-
                     const SizedBox(
                       height: 16,
                     ),
-                    // showProgressBar == true
-                    //     ? CircularProgressIndicator(
-                    //         valueColor: AlwaysStoppedAnimation<Color>(Colors.pink),
-                    //       )
-                    //     : Container()
                   ],
                 ),
               ),
