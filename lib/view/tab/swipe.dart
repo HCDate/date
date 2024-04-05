@@ -29,66 +29,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
     profileController.getResults();
   }
 
-  applyFilter() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: Text("Matching Filter"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('I am looking for a'),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text("who's age equal or above"),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DropdownButton<String>(
-                      items: ['20', '30', '40', '45'].map((value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          chosenAge = value;
-                        });
-                      },
-                      hint: Text("select age"),
-                      value: chosenAge,
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                ElevatedButton(
-                    onPressed: () {
-                      profileController.getResults();
-
-                      Get.back();
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pink,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16))),
-                    child: Text(
-                      'Done',
-                      style: TextStyle(color: Colors.white),
-                    ))
-              ],
-            );
-          });
-        });
-  }
-
   readCurrentUserData() async {
     await FirebaseFirestore.instance
         .collection("users")
@@ -252,21 +192,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
                                 "Habesha\nChristian\nMingle",
                                 style:
                                     TextStyle(color: Colors.pink, fontSize: 17),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 0, left: 10),
-                                child: IconButton(
-                                    onPressed: () {
-                                      applyFilter();
-                                    },
-                                    icon: Icon(
-                                      Icons.filter_list,
-                                      size: 30,
-                                      color: Colors.pink,
-                                    )),
                               ),
                             ),
                           ],
