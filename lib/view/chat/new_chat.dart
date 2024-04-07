@@ -64,7 +64,7 @@ class NewChatPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'You have no chats Maches',
+                    'You have no chats yet!',
                     style: TextStyle(fontSize: 20),
                   ),
                 ],

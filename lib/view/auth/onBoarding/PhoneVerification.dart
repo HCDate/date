@@ -118,7 +118,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                                                     TextInputType.phone,
                                                 decoration: InputDecoration(
                                                     labelText:
-                                                        'Enter you phone number',
+                                                        'Enter your verifiction code',
                                                     border: OutlineInputBorder(
                                                         borderRadius:
                                                             BorderRadius

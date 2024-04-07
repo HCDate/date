@@ -640,6 +640,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.emoji_emotions),
                         onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           setState(() {
                             _showEmojiPicker =
                                 !_showEmojiPicker; // Toggle emoji picker visibility

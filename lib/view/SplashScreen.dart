@@ -22,16 +22,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.pink,
+      decoration: BoxDecoration(
+        color: Colors.pink[300],
+        image: DecorationImage(
+          image: AssetImage('assets/images/logo_bg_ellipse.png'),
+        ),
+      ),
       child: const Center(
-        child: Text(
-          "habesha\nchristian\nmingle",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30,
-            decoration: TextDecoration.none,
-          ),
+        child: Image(
+          image: AssetImage('assets/images/logo.png'),
         ),
       ),
     );

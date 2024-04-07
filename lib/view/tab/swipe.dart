@@ -1,11 +1,16 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date/view/SplashScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:get/get.dart';
 import '../../controller/profile_controller.dart';
 import '../../global.dart';
 import '../../models/person.dart';
 import '../../view/tab/user_detail.dart';
+import '../home/match_filter.dart';
 
 class SwipeScreen extends StatefulWidget {
   const SwipeScreen({Key? key}) : super(key: key);
@@ -182,15 +187,24 @@ class _SwipeScreenState extends State<SwipeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
                               padding: EdgeInsets.only(left: 24, top: 8),
-                              child: Text(
-                                "Habesha\nChristian\nMingle",
-                                style:
-                                    TextStyle(color: Colors.pink, fontSize: 17),
+                              child: Image(
+                                image: AssetImage('assets/images/logo_pink.png'),
+                                width: 70,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Padding(
+                              padding: EdgeInsets.all(20),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.to(() => MatchFilter());
+                                },
+                                child: Icon(Icons.menu)
                               ),
                             ),
                           ],

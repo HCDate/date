@@ -298,7 +298,7 @@ class ChatController {
         'type': 'text',
         'seen': false,
         'senderId': senderId,
-        'timestamp': Timestamp.fromDate(DateTime.now().toUtc()),
+        'timestamp': FieldValue.serverTimestamp(),
         'duration': ''
       });
 

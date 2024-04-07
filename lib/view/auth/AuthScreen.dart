@@ -52,14 +52,8 @@ class AuthScreen extends StatelessWidget {
   Widget _buildTextSection() {
     return GestureDetector(
       child: const Center(
-        child: Text(
-          "habesha\nchristian\nmingle",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 36,
-            decoration: TextDecoration.none,
-          ),
+        child: Image(
+          image: AssetImage('assets/images/logo.png'),
         ),
       ),
     );
@@ -77,7 +71,7 @@ class AuthScreen extends StatelessWidget {
       height: 50,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
       ),
       child: TextButton(
         onPressed: onPressed,

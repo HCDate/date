@@ -199,7 +199,7 @@ class AuthenticationController extends GetxController {
         PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
     try {
       final user = await _firebaseAuth.signInWithCredential(cred);
-      if (user.user != null) {
+      if (user.user == null) {
         Get.to(const FirstPage());
       } else {
         return "Error in otp login";
