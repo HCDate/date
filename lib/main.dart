@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       title: 'Habesha Dating',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(240, 98, 146, 1)),
         useMaterial3: true,
       ),
       home: const AuthScreen(),
