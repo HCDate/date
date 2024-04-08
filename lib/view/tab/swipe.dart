@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date/view/SplashScreen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -202,7 +203,10 @@ class _SwipeScreenState extends State<SwipeScreen> {
                               padding: EdgeInsets.all(20),
                               child: GestureDetector(
                                 onTap: () {
-                                  Get.to(() => MatchFilter());
+                                  showCupertinoModalPopup(
+                                    context: context,
+                                    builder: (BuildContext context) => MatchFilter(),
+                                  );
                                 },
                                 child: Icon(Icons.menu)
                               ),
