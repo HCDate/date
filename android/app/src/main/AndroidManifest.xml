@@ -7,7 +7,7 @@ xmlns:tools="http://schemas.android.com/tools"
     <application
        android:name="${applicationName}"
         android:icon="@mipmap/lovelogo"
-        android:label="date"
+        android:label="Habesha Date"
         tools:replace="android:label">
         <activity
             android:name=".MainActivity"

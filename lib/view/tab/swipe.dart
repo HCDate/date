@@ -69,25 +69,30 @@ class _SwipeScreenState extends State<SwipeScreen> {
               onTap: () {
                 Get.to(() => UserDetailScreen(userID: person.uid));
               },
-              child: Image.network(
-                person.imageProfile.toString(),
-                fit: BoxFit.cover,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  );
-                },
-                errorBuilder: (BuildContext context, Object error,
-                    StackTrace? stackTrace) {
-                  return const Icon(Icons.error);
-                },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Image.network(
+                  person.imageProfile.toString(),
+                  fit: BoxFit.cover,
+                  loadingBuilder: (BuildContext context, Widget child,
+                      ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (BuildContext context, Object error,
+                      StackTrace? stackTrace) {
+                    return const Icon(Icons.error);
+                  },
+                ),
               ),
             ),
           ),
@@ -177,8 +182,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'You have no get Maches for now!',
+                        'Match not found for now!\n But, maybe later!',
                         style: TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
