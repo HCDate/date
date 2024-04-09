@@ -5,15 +5,21 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'firebase_config.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-          options: const FirebaseOptions(
-              apiKey: "AIzaSyAgjLLHu_kj1pson6Mxy2VI45bVCy8_df4",
-              appId: "1:657318502691:android:933f51e85f8b94f8f36c96",
-              messagingSenderId: "657318502691",
-              projectId: "habeshac-7856b",
-              storageBucket: "habeshac-7856b.appspot.com"))
+          options: DefaultFirebaseOptions.currentPlatform,
+          
+          // const FirebaseOptions(
+          //     apiKey: "AIzaSyAgjLLHu_kj1pson6Mxy2VI45bVCy8_df4",
+          //     appId: "1:657318502691:android:933f51e85f8b94f8f36c96",
+          //     messagingSenderId: "657318502691",
+          //     projectId: "habeshac-7856b",
+          //     storageBucket: "habeshac-7856b.appspot.com")
+              
+              )
       .then((value) {
     Get.put(AuthenticationController());
   });
