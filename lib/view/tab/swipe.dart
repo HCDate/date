@@ -225,9 +225,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
                             controller: _controller,
                             cardsCount: profileList.length,
                             cardBuilder:
-                                (context, index, realIndex, swipeIndex) {
+                              (context, index, realIndex, swipeIndex) {
                               final person = profileList[index];
-                              return _buildCard(person);
+                                return _buildCard(person);
                             },
                             numberOfCardsDisplayed: 1,
                             onSwipe: (int previousIndex, int? currentIndex,
@@ -272,7 +272,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                _controller.undo();
+                                _controller.moveTo(0);
                                 setState(() {
                                   _swipeFinished = false;
                                 });
