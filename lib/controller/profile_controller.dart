@@ -38,7 +38,7 @@ class ProfileController extends GetxController {
       usersProfileList.bindStream(
         FirebaseFirestore.instance
             .collection("users")
-            .where("lookingFor", isEqualTo: currentLookingFor.toString())
+            .where("lookingFor", whereIn: [currentLookingFor.toUpperCase(), currentLookingFor.toLowerCase()])
             .orderBy("publishedDateTime", descending: true)
             .snapshots()
             .map((QuerySnapshot queryDataSnapshot) {
@@ -62,9 +62,8 @@ class ProfileController extends GetxController {
       usersProfileList.bindStream(
         FirebaseFirestore.instance
             .collection("users")
-            .where("lookingFor", isEqualTo: currentLookingFor.toString())
-            .where("age",
-                isGreaterThanOrEqualTo: int.parse(chosenAge.toString()))
+            .where("lookingFor", whereIn: [currentLookingFor.toUpperCase(), currentLookingFor.toLowerCase()])
+            .where("age", isGreaterThanOrEqualTo: int.parse(chosenAge.toString()))
             .snapshots()
             .map((QuerySnapshot queryDataSnapshot) {
           List<Person> profileList = [];
