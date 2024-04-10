@@ -435,7 +435,7 @@ class ChatController {
 
       QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
           .collection('users')
-          .where("lookingFor", isEqualTo: currentLookingFor.toString())
+            .where("lookingFor", whereIn: [currentLookingFor.toUpperCase(), currentLookingFor.toLowerCase()])
           .get();
       List<Map<String, dynamic>?> usersList = [];
 
