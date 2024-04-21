@@ -64,6 +64,16 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   final int _limitIncrement = 20;
   List<QueryDocumentSnapshot> listMessage = [];
 
+  void _scrollToBottom() {
+    // if (_scrollController.hasClients) {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent + 300,
+      duration: const Duration(milliseconds: 30),
+      curve: Curves.easeInOut,
+    );
+    // }
+  }
+
   Future<bool> checkPermission() async {
     if (!await Permission.microphone.isGranted) {
       PermissionStatus status = await Permission.microphone.request();
@@ -399,6 +409,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         final messages = snapshot.data!;
 
         // Debug: Print messages to see if data is coming from the stream
+        
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        });
 
         return ListView.builder(
             shrinkWrap: true,

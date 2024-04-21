@@ -124,7 +124,7 @@ class ChatController {
         sendPushNotification(token, name, 'have image');
       } else {
         Get.snackbar(
-            "Profile Image", "Your image exceed 4mb.please choice low.");
+            "Chat Image", "Your image exceed 4mb.please choice low.");
       }
     } catch (error) {
       throw error; // Handle the error as per your requirement
@@ -431,11 +431,10 @@ class ChatController {
           .doc(currentUserId)
           .get();
       String currentGender = currentUserDoc['gender'];
-      String currentLookingFor = currentUserDoc['lookingFor'];
+      // String currentLookingFor = currentUserDoc['lookingFor'];
 
       QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
           .collection('users')
-            .where("lookingFor", whereIn: [currentLookingFor.toUpperCase(), currentLookingFor.toLowerCase()])
           .get();
       List<Map<String, dynamic>?> usersList = [];
 

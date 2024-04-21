@@ -181,11 +181,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Match not found for now!\n But, maybe later!',
-                        style: TextStyle(fontSize: 20),
-                        textAlign: TextAlign.center,
-                      ),
+                      CircularProgressIndicator()
                     ],
                   ),
                 )

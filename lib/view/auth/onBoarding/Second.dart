@@ -88,7 +88,7 @@ class _SecondPageState extends State<SecondPage> {
             const SizedBox(
               height: 30,
             ),
-            getWidget(true, false),
+            getWidget(false, false),
             const SizedBox(
               height: 35,
             ),

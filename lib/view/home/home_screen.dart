@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         token = token;
 
-        print("my token $token");
+        // print("my token $token");
       });
       saveToken(token!);
     });
