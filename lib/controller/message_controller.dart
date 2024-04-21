@@ -10,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/chat.dart';
 import '../models/message.dart';
@@ -26,7 +27,7 @@ class ChatController {
     imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (imageFile != null) {
       Get.snackbar(
-          "Profile Image", "you have successfully picked your profile image");
+          "Chat Image", "You have uploaded an image successfully!");
     }
     pickedFile = Rx<File?>(File(imageFile!.path));
   }
@@ -34,7 +35,7 @@ class ChatController {
   captureImageFromPhone() async {
     imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
     if (imageFile != null) {
-      Get.snackbar("Profile Image",
+      Get.snackbar("Chat Image",
           "you have successfully picked your profile image using camera");
     }
     pickedFile = Rx<File?>(File(imageFile!.path));
@@ -69,7 +70,7 @@ class ChatController {
         Reference reference = FirebaseStorage.instance
             .ref()
             .child("Images")
-            .child(FirebaseAuth.instance.currentUser!.uid);
+            .child(Uuid().v4());
 
         UploadTask task = reference.putFile(imageFile);
 
