@@ -128,31 +128,31 @@ class _SwipeScreenState extends State<SwipeScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () => profileController
-                          .toggleLikedStatus(person.uid.toString()),
-                      child: Obx(() {
-                        final liked =
-                            profileController.isLiked(person.uid ?? '');
-                        return Icon(
-                          liked ? Icons.star : Icons.star_border,
-                          color: liked ? Colors.yellow : Colors.pink,
-                          size: 40,
-                        );
-                      }),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () => profileController
                           .toggleFavoritedStatus(person.uid.toString()),
                       child: Obx(() {
                         final favorited =
                             profileController.isFavorited(person.uid ?? '');
                         return Icon(
-                          favorited ? Icons.favorite : Icons.favorite_border,
-                          color: favorited ? Colors.red : Colors.pink,
+                          favorited ? Icons.star : Icons.star_border,
+                          color: favorited ? Colors.yellow : Colors.pink,
                           size: 40,
                         );
                       }),
                     ),
+                    ElevatedButton(
+                      onPressed: () => profileController
+                          .toggleLikedStatus(person.uid.toString()),
+                      child: Obx(() {
+                        final liked =
+                            profileController.isLiked(person.uid ?? '');
+                        return Icon(
+                          liked ? Icons.favorite : Icons.favorite_border,
+                          color: liked ? Colors.red : Colors.pink,
+                          size: 40,
+                        );
+                      }),
+                    ),
+                    const SizedBox(width: 8),
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {

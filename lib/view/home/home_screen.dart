@@ -83,13 +83,13 @@ class _HomeScreenState extends State<HomeScreen> {
               label: ""),
           BottomNavigationBarItem(
               icon: Icon(
-                Icons.favorite,
+                Icons.star,
                 size: 30,
               ),
               label: ""),
           BottomNavigationBarItem(
               icon: Icon(
-                Icons.star,
+                Icons.favorite,
                 size: 30,
               ),
               label: ""),
