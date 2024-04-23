@@ -68,6 +68,8 @@ class _SignUpState extends State<SignUp> {
     // print(user);
     // return await FirebaseAuth.instance.signInWithCredential(credential);
   }
+  bool _isLoadingGoogle = false;
+  bool _isLoadingPhone = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,13 +94,15 @@ class _SignUpState extends State<SignUp> {
                   _buildButtonSection(
                     context: context,
                     label: "Sign Up With Google",
-                    onPressed: () => signInWithGoogle(),
+                    onPressed: () => _handleGoogleSignup(context),
                     color: Colors.white,
                     textColor: Colors.black,
-                    Icon: const Icon(
-                      SimpleIcons.google,
-                      color: Colors.green,
-                    ),
+                    icon: _isLoadingGoogle
+                        ? const CircularProgressIndicator()
+                        : const Icon(
+                            SimpleIcons.google,
+                            color: Colors.green,
+                          ),
                   ),
                   const SizedBox(
                     height: 20,
@@ -106,10 +110,10 @@ class _SignUpState extends State<SignUp> {
                   _buildButtonSection(
                     context: context,
                     label: "Sign Up with Phone Number",
-                    onPressed: () => Get.to(const PhoneVerification()),
+                    onPressed: () => _handlePhoneSignup(context),
                     color: Colors.pink,
                     textColor: Colors.white,
-                    Icon: const Icon(
+                    icon: const Icon(
                       Icons.phone,
                       color: Colors.white,
                     ),
@@ -125,6 +129,28 @@ class _SignUpState extends State<SignUp> {
             ))
       ],
     );
+  }
+  
+  // Handle Google Sign Up with loading indicator
+  _handleGoogleSignup(BuildContext context) async {
+    setState(() {
+      _isLoadingGoogle = true; // Set loading flag to true
+    });
+    await signInWithGoogle();
+    setState(() {
+      _isLoadingGoogle = false; // Set loading flag to false after completion
+    });
+  }
+
+  // Handle Phone Sign Up with loading indicator (assuming Get.to opens PhoneVerification)
+  _handlePhoneSignup(BuildContext context) async {
+    setState(() {
+      _isLoadingPhone = true; // Set loading flag to true
+    });
+    await Get.to(const PhoneVerification());
+    setState(() {
+      _isLoadingPhone = false; // Set loading flag to false after completion
+    });
   }
 
   Widget _buildTextSection() {
@@ -143,7 +169,7 @@ class _SignUpState extends State<SignUp> {
       required VoidCallback onPressed,
       required Color color,
       Color? textColor,
-      Icon? Icon}) {
+      required Widget icon}) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: 50,
@@ -155,9 +181,9 @@ class _SignUpState extends State<SignUp> {
         onPressed: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon!,
+            icon,
             Text(
               label,
               style: TextStyle(

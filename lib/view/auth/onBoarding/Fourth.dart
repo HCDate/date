@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:uic/widgets/action_button.dart';
 
 import '../../../global.dart';
+import '../../../../.env';
 
 class FourthPage extends StatefulWidget {
   const FourthPage({super.key});
@@ -25,27 +26,35 @@ class _FourthPageState extends State<FourthPage> {
   Map<String, dynamic>? paymentIntent;
   var authenticationController =
       AuthenticationController.authenticationController;
+
+  @override
+  void initState() {
+    super.initState();
+    Stripe.publishableKey = stripe_pk;
+  }
+
   void makePayment() async {
     try {
       paymentIntent = await createPaymentIntent();
       setState(() {
         paymentStatus = true;
       });
+      print(paymentIntent);
+      if (paymentIntent == null || !paymentIntent!.containsKey("client_secret")) {
+        throw Exception("Invalid payment intent");
+      }
       var gpay = const PaymentSheetGooglePay(
           merchantCountryCode: "US", currencyCode: "US", testEnv: true);
       await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
               paymentIntentClientSecret: paymentIntent!["client_secret"],
               style: ThemeMode.light,
-              merchantDisplayName: "Beki",
+              merchantDisplayName: "Abeniy",
               googlePay: gpay));
       displayPaymentSheet();
-      setState(() {
-        paymentStatus = true;
-      });
     } catch (e) {
       setState(() {
-        paymentStatus = true;
+        paymentStatus = false;
       });
       throw Exception(e.toString());
     }
@@ -55,7 +64,7 @@ class _FourthPageState extends State<FourthPage> {
     try {
       await Stripe.instance.presentPaymentSheet();
     } catch (e) {
-      return;
+      throw Exception(e.toString());
     }
   }
 
@@ -75,7 +84,7 @@ class _FourthPageState extends State<FourthPage> {
           body: body,
           headers: {
             "Authorization":
-                "Bearer sk_test_51OFYhgD9rzaCJql7s4IMR4aqt0iZZZqXq8CrrM5xt5m0fKuJCtxQ7phaIoLBkxfVim4XwIAqHbhnWMvPWhWseMCL00oHD6rcGM",
+                "Bearer $stripe_sk",
             "Content-Type": "application/x-www-form-urlencoded"
           });
       return json.decode(response.body);
@@ -182,73 +191,6 @@ class _FourthPageState extends State<FourthPage> {
             ),
             const SizedBox(
               height: 50,
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => UsePaypal(
-                        sandboxMode: true,
-                        clientId:
-                            "AS4Y8vl9WGXCB3VNinxQ9zyccNwN2u1Wj_anaR7mPK1Kvys-CmLdi5Azv5fVKGGy_UM08bSMm-kly7zI",
-                        secretKey:
-                            "EGp3K6HurDSpXM1UCS-1ariWtGH1oqPPcSPqJ6yFx-tzKRIuNKgLMW_DJ3KsOel3FUZZ8l1SrW382Zmf",
-                        returnURL: "https://samplesite.com/return",
-                        cancelURL: "https://samplesite.com/cancel",
-                        transactions: const [
-                          {
-                            "amount": {
-                              "total": '20',
-                              "currency": "USD",
-                              "details": {
-                                "subtotal": '10.12',
-                                "shipping": '0',
-                                "shipping_discount": 0
-                              }
-                            },
-                            "description": "The payment for sign up.",
-                            "item_list": {
-                              "items": [
-                                {
-                                  "name": "registration",
-                                  "quantity": 1,
-                                  "price": '20',
-                                  "currency": "USD"
-                                }
-                              ],
-                            }
-                          }
-                        ],
-                        note: "Contact us for any questions on your order.",
-                        onSuccess: (Map params) async {
-                          setState(() {
-                            paymentStatus = true;
-                          });
-                        },
-                        onError: (error) {},
-                        onCancel: (params) {
-                          setState(() {
-                            paymentStatus = true;
-                          });
-                        }),
-                  ),
-                );
-              },
-              child: const Row(
-                children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Icon(Icons.paypal),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Text(
-                    "PayPal",
-                    style: TextStyle(fontSize: 18),
-                  )
-                ],
-              ),
             ),
             const SizedBox(
               height: 80,
