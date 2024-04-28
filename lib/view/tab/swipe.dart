@@ -60,6 +60,8 @@ class _SwipeScreenState extends State<SwipeScreen> {
   }
 
   Widget _buildCard(Person person) {
+    var fav = profileController.isFavorited(person.uid ?? '');
+    var liked = profileController.isLiked(person.uid ?? '');
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -67,7 +69,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                Get.to(() => UserDetailScreen(userID: person.uid));
+                Get.to(() => UserDetailScreen(userID: person.uid ?? currentUserID));
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -103,7 +105,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Get.to(() => UserDetailScreen(userID: person.uid));
+                    Get.to(() => UserDetailScreen(userID: person.uid ?? ''));
                   },
                   child: Text(
                     person.name.toString(),
@@ -127,30 +129,30 @@ class _SwipeScreenState extends State<SwipeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () => profileController
-                          .toggleFavoritedStatus(person.uid.toString()),
-                      child: Obx(() {
-                        final favorited =
-                            profileController.isFavorited(person.uid ?? '');
-                        return Icon(
-                          favorited ? Icons.star : Icons.star_border,
-                          color: favorited ? Colors.yellow : Colors.pink,
+                      onPressed: () async {
+                          await profileController.toggleFavoritedStatus(person.uid.toString());
+                            setState(() {
+                              fav = profileController.isFavorited(person.uid ?? '');
+                            });
+                          },
+                      child: Icon(
+                          fav ? Icons.star : Icons.star_border,
+                          color: fav ? Colors.yellow : Colors.pink,
                           size: 40,
-                        );
-                      }),
+                        ),
                     ),
                     ElevatedButton(
-                      onPressed: () => profileController
-                          .toggleLikedStatus(person.uid.toString()),
-                      child: Obx(() {
-                        final liked =
-                            profileController.isLiked(person.uid ?? '');
-                        return Icon(
+                      onPressed: () async {
+                          await profileController.toggleLikedStatus(person.uid.toString());
+                          setState(() {
+                            liked = profileController.isLiked(person.uid ?? currentUserID);
+                          });
+                        },
+                      child: Icon(
                           liked ? Icons.favorite : Icons.favorite_border,
                           color: liked ? Colors.red : Colors.pink,
                           size: 40,
-                        );
-                      }),
+                        )
                     ),
                     const SizedBox(width: 8),
                     const SizedBox(width: 8),

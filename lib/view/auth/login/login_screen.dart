@@ -77,6 +77,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  bool _isLoadingGoogle = false;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -99,13 +101,15 @@ class _LoginScreenState extends State<LoginScreen> {
               _buildButtonSection(
                 context: context,
                 label: "Sign In With Google",
-                onPressed: () => signInWithGoogle(),
+                onPressed: () => _handleGoogleSignin(context),
                 color: Colors.white,
                 textColor: Colors.black,
-                Icon: const Icon(
-                  SimpleIcons.google,
-                  color: Colors.green,
-                ),
+                icon: _isLoadingGoogle
+                        ? const CircularProgressIndicator()
+                        : const Icon(
+                            SimpleIcons.google,
+                            color: Colors.green,
+                          ),
               ),
               const SizedBox(
                 height: 20,
@@ -116,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () => Get.to(const PhoneLogin()),
                 color: Colors.pink,
                 textColor: Colors.white,
-                Icon: const Icon(
+                icon: const Icon(
                   Icons.phone,
                   color: Colors.white,
                 ),
@@ -140,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
       required VoidCallback onPressed,
       required Color color,
       Color? textColor,
-      Icon? Icon}) {
+      required Widget icon}) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: 50,
@@ -152,19 +156,31 @@ class _LoginScreenState extends State<LoginScreen> {
         onPressed: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon!,
+            icon,
             Text(
               label,
               style: TextStyle(
                 color: textColor ?? Colors.white,
-                fontSize: 20,
+                fontSize: 16,
               ),
             ),
           ],
         ),
       ),
     );
+  }
+ 
+  // Handle Google Sign Up with loading indicator
+  _handleGoogleSignin(BuildContext context) async {
+    setState(() {
+      _isLoadingGoogle = true; // Set loading flag to true
+    });
+    await signInWithGoogle();
+    setState(() {
+      _isLoadingGoogle = false; // Set loading flag to false after completion
+    });
   }
 
   Widget _buildTextSection() {

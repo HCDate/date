@@ -91,8 +91,7 @@ class _ChatListPageState extends State<ChatListPage> {
           ),
           Expanded(
             child: StreamBuilder<List<Chat>>(
-              stream: _chatController
-                  .getChats(FirebaseAuth.instance.currentUser!.uid),
+              stream: _chatController.getChats(FirebaseAuth.instance.currentUser!.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -118,8 +117,7 @@ class _ChatListPageState extends State<ChatListPage> {
                   );
                 } else {
                   allChats = snapshot.data!;
-                  final chats =
-                      filteredChats.isNotEmpty ? filteredChats : allChats;
+                  final chats = filteredChats.isNotEmpty ? filteredChats : allChats;
                   return chats.isEmpty
                       ? const Center(
                           child: Text('User not found'),
@@ -250,11 +248,9 @@ class _ChatListPageState extends State<ChatListPage> {
                                                       chat.seen
                                                           ? const Icon(
                                                               Icons.done_all,
-                                                              color: Colors
-                                                                  .pink) // Seen icon
+                                                              color: Colors.pink) // Seen icon
                                                           : lastMessage
-                                                                      .senderId !=
-                                                                  currentUserId
+                                                                      .senderId != currentUserId
                                                               ? Padding(
                                                                   padding:
                                                                       const EdgeInsets
@@ -273,10 +269,10 @@ class _ChatListPageState extends State<ChatListPage> {
                                                                                 Colors.pink)),
                                                                     child:
                                                                         const Text(
-                                                                      'new',
+                                                                      '.',
                                                                       style: TextStyle(
                                                                           color:
-                                                                              Colors.white),
+                                                                              Colors.pink),
                                                                     ),
                                                                   ),
                                                                 )

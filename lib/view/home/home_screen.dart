@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date/view/chat/chat_list.dart';
+import 'package:date/view/tab/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const ChatListPage(),
     const FavoriteScreen(),
     const LikeScreen(),
-    UserDetailScreen(
+    UserProfileScreen(
       userID: FirebaseAuth.instance.currentUser!.uid,
     )
   ];

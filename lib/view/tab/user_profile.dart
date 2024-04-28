@@ -2,10 +2,8 @@ import 'dart:ui';
 
 import 'package:bilions_ui/bilions_ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date/controller/message_controller.dart';
 import 'package:date/controller/profile_controller.dart';
 import 'package:date/global.dart';
-import 'package:date/models/chat.dart';
 import 'package:date/view/home/home_screen.dart';
 import 'package:date/view/settings/account_setting.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,14 +18,14 @@ import '../../controller/auth_controller.dart';
 import '../auth/login/login_screen.dart';
 
 // ignore: must_be_immutable
-class UserDetailScreen extends StatefulWidget {
-  String userID;
-  UserDetailScreen({super.key, required this.userID});
+class UserProfileScreen extends StatefulWidget {
+  String? userID;
+  UserProfileScreen({super.key, this.userID});
   @override
-  State<UserDetailScreen> createState() => _UserDetailScreenState();
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
-class _UserDetailScreenState extends State<UserDetailScreen>
+class _UserProfileScreenState extends State<UserProfileScreen>
     with TickerProviderStateMixin {
   var authenticationController =
       AuthenticationController.authenticationController;
@@ -39,7 +37,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
   String country = "";
   String bio = '';
   String profilePicture = '';
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String profession = "";
   String employmentStatus = "";
@@ -60,8 +57,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
       "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
   String urlImage5 =
       "https://firebasestorage.googleapis.com/v0/b/date-50347.appspot.com/o/placeholder%2Fprofile_avatar.jpg?alt=media&token=97e0f9f5-d4c6-42b5-98f9-4e66783c50cb";
-      
- 
 
   retrieveUserInfo() async {
     await FirebaseFirestore.instance
@@ -103,8 +98,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
   String favorited = '';
   String liked = '';
   String favorites = '';
-  late String currentUserId;
-  final ChatController _chatController = ChatController();
   @override
   void initState() {
     super.initState();
@@ -115,8 +108,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
     if (kDebugMode) {
       print(bio);
     }
-    currentUserId = FirebaseAuth.instance.currentUser!.uid;
-    final chatdoc = _chatController.getSingleChatById("FQcjv5qnhhTlGpLIW9V6WZ71uLS2_bkRiB098fURtrNzLlwCiupwBh9y2a8b99c81");
   }
 
   void count() async {
@@ -211,7 +202,6 @@ class _UserDetailScreenState extends State<UserDetailScreen>
   @override
   Widget build(BuildContext context) {
     TabController tabController = TabController(length: 2, vsync: this);
-
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -420,35 +410,13 @@ class _UserDetailScreenState extends State<UserDetailScreen>
                     controller: tabController,
                     isScrollable: true,
                     indicatorColor: Colors.pink,
-                    tabs: [
-                      const Tab(
+                    tabs: const [
+                      Tab(
                         text: "About",
                       ),
-                      const Tab(
+                      Tab(
                         text: "Gallery",
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) =>
-                          //       ChatPage(
-                          //         chat: _chatController.getSingleChat(currentUserId, widget.userID),
-                          //         currentUserId: currentUserId,
-                          //         uid: widget.userID,
-                          //       ),
-                          //   ),
-                          // );
-                      }, 
-                      child: const Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(Icons.chat),
-                          SizedBox(width: 10,),
-                          Text("Message"),
-                        ],
-                      ))
+                      )
                     ]),
                 SizedBox(
                   width: double.maxFinite,

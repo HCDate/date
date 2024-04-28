@@ -248,12 +248,26 @@ class ProfileController extends GetxController {
           .doc(userId)
           .delete();
       _likedUserIds.value.remove(userId);
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .collection('likeReceived')
+          .doc(currentUserID)
+          .delete();
+      _likedUserIds.value.remove(userId);
     } else {
       await FirebaseFirestore.instance
           .collection("users")
           .doc(currentUserID)
           .collection('likeSent')
           .doc(userId)
+          .set({});
+      _likedUserIds.value.add(userId);
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .collection('likeReceived')
+          .doc(currentUserID)
           .set({});
       _likedUserIds.value.add(userId);
     }
@@ -268,12 +282,26 @@ class ProfileController extends GetxController {
           .doc(userId)
           .delete();
       _favoritedUserIds.value.remove(userId);
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .collection('favoriteReceived')
+          .doc(currentUserID)
+          .delete();
+      _favoritedUserIds.value.remove(userId);
     } else {
       await FirebaseFirestore.instance
           .collection("users")
           .doc(currentUserID)
           .collection('favoriteSent')
           .doc(userId)
+          .set({});
+      _favoritedUserIds.value.add(userId);
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .collection('favoriteReceived')
+          .doc(currentUserID)
           .set({});
       _favoritedUserIds.value.add(userId);
     }

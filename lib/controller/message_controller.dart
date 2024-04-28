@@ -40,7 +40,7 @@ class ChatController {
     }
     pickedFile = Rx<File?>(File(imageFile!.path));
   }
-
+  
   Stream<List<Chat>> getChats(String userId) {
     try {
       return _firestore
@@ -48,19 +48,73 @@ class ChatController {
           .where('memberIds', arrayContains: userId)
           .snapshots()
           .map((querySnapshot) {
-        return querySnapshot.docs.map((chatDoc) {
-          // Convert each chat document to a Chat object
-          final chat = Chat.fromFirestore(chatDoc);
-          // return Chat.fromFirestore(chatDoc);
-          return chat;
-        }).toList();
-      });
+            final chats = querySnapshot.docs.map((chatDoc) {
+              // Convert each chat document to a Chat object
+              final chat = Chat.fromFirestore(chatDoc);
+              return chat;
+            }).toList();
+
+            // Sort chats by the last message timestamp in descending order
+            chats.sort((a, b) {
+              final aTimestamp = a.messages.last.timestamp;
+              final bTimestamp = b.messages.last.timestamp;
+              return bTimestamp.compareTo(aTimestamp);
+            });
+
+            return chats;
+          });
     } catch (error) {
       // You might want to handle the error differently based on your needs
       rethrow;
     }
   }
 
+// Stream<List<Chat>> getSingleChat(String userId, String friendId) {
+//   try {
+//     return _firestore
+//         .collection('chats')
+//         .where('memberIds', arrayContains: userId)
+//         .snapshots()
+//         .map((querySnapshot) {
+//           final chats = querySnapshot.docs.where((doc) {
+//             // Check if the document contains both userId and friendId
+//             return doc['memberIds'].contains(userId) && doc['memberIds'].contains(friendId);
+//           }).toList();
+
+//           if (chats.isNotEmpty) {
+//             // If there are chats, return the chatId of the first chat
+//             return chats;
+//           } else {
+//             // If there are no chats, return null
+//             return [];
+//           }
+//         });
+//   } catch (error) {
+//     // You might want to handle the error differently based on your needs
+//     rethrow;
+//   }
+// }
+
+Future<DocumentSnapshot<Object?>?> getSingleChatById(String chatId) async {
+  try {
+    DocumentSnapshot<Object?> chatDoc = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatId)
+        .get();
+
+    // Check if the document exists
+    if (chatDoc.exists) {
+      return chatDoc;
+    } else {
+      // If the document doesn't exist, return null
+      return null;
+    }
+  } catch (error) {
+    // You might want to handle the error differently based on your needs
+    print("Error fetching chat: $error");
+    return null;
+  }
+}
   Future<String> uploadImageToStorage(File imageFile) async {
     try {
       // Check file size before upload
@@ -359,8 +413,7 @@ class ChatController {
     }
   }
 
-  Future<List<Chat>> filterChatsByQuery(
-      String currentUserId, String query, List<Chat> chats) async {
+  Future<List<Chat>> filterChatsByQuery(String currentUserId, String query, List<Chat> chats) async {
     query = query.toLowerCase();
 
     List<Chat> filteredChats = [];
