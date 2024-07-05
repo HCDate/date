@@ -10,8 +10,8 @@ import 'package:uic/step_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'package:uic/widgets/action_button.dart';
 
-import '../../../global.dart';
-import '../../../../.env';
+import 'package:date/global.dart';
+import 'package:date/.env';
 
 class FourthPage extends StatefulWidget {
   const FourthPage({super.key});
