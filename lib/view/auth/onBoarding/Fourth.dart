@@ -64,7 +64,7 @@ class _FourthPageState extends State<FourthPage> {
     try {
       await Stripe.instance.presentPaymentSheet();
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exceptioxn(e.toString());
     }
   }
 
