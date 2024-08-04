@@ -2,18 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>657318502691-cri0ii7qte5cpar20kfgdak14af0d59d.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.657318502691-cri0ii7qte5cpar20kfgdak14af0d59d</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>657318502691-2rs88af8ldn4aqalbu3plbb2d7ee2hro.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyD4mdAbt8NB1sHO96srnRk6FBB3o8rBsG4</string>
+	<string>AIzaSyAdgwFLP30TEAYG9PV51hU6H_jAcunP2g0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>832945625672</string>
+	<string>657318502691</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.date</string>
+	<string>com.beqisolution.habeshachristianmingle</string>
 	<key>PROJECT_ID</key>
-	<string>date-50347</string>
+	<string>habeshac-7856b</string>
 	<key>STORAGE_BUCKET</key>
-	<string>date-50347.appspot.com</string>
+	<string>habeshac-7856b.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:832945625672:ios:79bdd20f0ee8542ab7967d</string>
+	<string>1:657318502691:ios:5398f640341db662f36c96</string>
 </dict>
 </plist>

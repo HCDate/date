@@ -35,12 +35,13 @@ class _FourthPageState extends State<FourthPage> {
 
   void makePayment() async {
     try {
-      paymentIntent = await createPaymentIntent();
+      paymentIntent = await createPaymentIntent(stripe_pk);
       setState(() {
         paymentStatus = true;
       });
       print(paymentIntent);
-      if (paymentIntent == null || !paymentIntent!.containsKey("client_secret")) {
+      if (paymentIntent == null ||
+          !paymentIntent!.containsKey("client_secret")) {
         throw Exception("Invalid payment intent");
       }
       var gpay = const PaymentSheetGooglePay(
@@ -64,7 +65,7 @@ class _FourthPageState extends State<FourthPage> {
     try {
       await Stripe.instance.presentPaymentSheet();
     } catch (e) {
-      throw Exceptioxn(e.toString());
+      throw Exception(e.toString());
     }
   }
 
@@ -73,18 +74,18 @@ class _FourthPageState extends State<FourthPage> {
     return a.toString();
   }
 
-  createPaymentIntent() async {
+  createPaymentIntent(stripe_sk) async {
     try {
       Map<String, dynamic> body = {
         "amount": calculateAmount('20'),
         "currency": "usd"
       };
+      var lsk = stripe_sk;
       http.Response response = await http.post(
           Uri.parse('https://api.stripe.com/v1/payment_intents'),
           body: body,
           headers: {
-            "Authorization":
-                "Bearer $stripe_sk",
+            "Authorization": "Bearer $lsk",
             "Content-Type": "application/x-www-form-urlencoded"
           });
       return json.decode(response.body);

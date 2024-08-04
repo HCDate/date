@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:657318502691:android:933f51e85f8b94f8f36c96",
+        "mobilesdk_app_id": "1:657318502691:android:90ec9697179007fcf36c96",
         "android_client_info": {
-          "package_name": "com.example.date"
+          "package_name": "com.beqisolution.habeshachristianmingle"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "657318502691-gm22md6d57ohh9aq264jl7jmacmomej7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.beqisolution.habeshachristianmingle",
+            "certificate_hash": "78f0b493a3df89578673c5601438926b06f3ce1d"
+          }
+        },
         {
           "client_id": "657318502691-bc2tvlrmam0pj2gui53eeg4jejeqnt6i.apps.googleusercontent.com",
           "client_type": 3
@@ -29,6 +37,117 @@
             {
               "client_id": "657318502691-bc2tvlrmam0pj2gui53eeg4jejeqnt6i.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "657318502691-m3e6sn5da6vuj49n9tqum9jf8jb50e4j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.beqisolutons.habeshachritianmingle"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657318502691:android:0e4e48d44ff3823df36c96",
+        "android_client_info": {
+          "package_name": "com.beqisolutons.habeshachritianmingle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657318502691-65ndf99r069fjtdd4uf526m6j2tqe9om.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.beqisolutons.habeshachritianmingle",
+            "certificate_hash": "78f0b493a3df89578673c5601438926b06f3ce1d"
+          }
+        },
+        {
+          "client_id": "657318502691-uf3eia7gfer66em96598h4d15sujh62n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.beqisolutons.habeshachritianmingle",
+            "certificate_hash": "f0f0522d99ec643ef9591f8f451c41d83b524e95"
+          }
+        },
+        {
+          "client_id": "657318502691-bc2tvlrmam0pj2gui53eeg4jejeqnt6i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgjLLHu_kj1pson6Mxy2VI45bVCy8_df4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657318502691-bc2tvlrmam0pj2gui53eeg4jejeqnt6i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "657318502691-m3e6sn5da6vuj49n9tqum9jf8jb50e4j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.beqisolutons.habeshachritianmingle"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657318502691:android:933f51e85f8b94f8f36c96",
+        "android_client_info": {
+          "package_name": "com.example.date"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657318502691-ebdcp0cfaib90e3gojprrsaka1hnrhmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.date",
+            "certificate_hash": "78f0b493a3df89578673c5601438926b06f3ce1d"
+          }
+        },
+        {
+          "client_id": "657318502691-ohsgmaf9vdshssvko8mt2kfq5sq5520q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.date",
+            "certificate_hash": "f0f0522d99ec643ef9591f8f451c41d83b524e95"
+          }
+        },
+        {
+          "client_id": "657318502691-bc2tvlrmam0pj2gui53eeg4jejeqnt6i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgjLLHu_kj1pson6Mxy2VI45bVCy8_df4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657318502691-bc2tvlrmam0pj2gui53eeg4jejeqnt6i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "657318502691-m3e6sn5da6vuj49n9tqum9jf8jb50e4j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.beqisolutons.habeshachritianmingle"
+              }
             }
           ]
         }

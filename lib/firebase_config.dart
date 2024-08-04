@@ -50,19 +50,18 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: "AIzaSyAgjLLHu_kj1pson6Mxy2VI45bVCy8_df4",
-              appId: "1:657318502691:android:933f51e85f8b94f8f36c96",
-              messagingSenderId: "657318502691",
-              projectId: "habeshac-7856b",
-              storageBucket: "habeshac-7856b.appspot.com"
-  );
+      apiKey: "AIzaSyAgjLLHu_kj1pson6Mxy2VI45bVCy8_df4",
+      appId: "1:657318502691:android:90ec9697179007fcf36c96",
+      messagingSenderId: "657318502691",
+      projectId: "habeshac-7856b",
+      storageBucket: "habeshac-7856b.appspot.com");
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCSPKk73Y0132pOD5Ps97JvsSi67McZjY8',
-    appId: '1:531689096987:ios:5c228e49133f23f3fff5be',
-    messagingSenderId: '531689096987',
-    projectId: 'atomsbox-ecomm-27d08',
-    storageBucket: 'atomsbox-ecomm-27d08.appspot.com',
-    iosBundleId: 'com.example.ecommerceWithFlutterFirebaseAndStripe',
+    apiKey: 'AIzaSyAdgwFLP30TEAYG9PV51hU6H_jAcunP2g0',
+    appId: '1:657318502691:ios:5398f640341db662f36c96',
+    messagingSenderId: '657318502691',
+    projectId: 'habeshac-7856b',
+    storageBucket: 'habeshac-7856b.appspot.com',
+    iosBundleId: 'com.beqisolution.habeshachristianmingle',
   );
 }
